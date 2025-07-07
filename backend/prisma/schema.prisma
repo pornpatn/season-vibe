@@ -28,9 +28,78 @@ model Role {
 }
 
 model Permission {
-  id     String @id @default(uuid())
-  module String
-  action String
-  roles  Role[] @relation("RolePermissions")
+  id       String  @id @default(uuid())
+  module   String
+  action   String
+  roles    Role[]  @relation("RolePermissions")
+
   @@unique([module, action], name: "module_action")
+}
+
+model Unit {
+  id               String               @id @default(uuid())
+  name             String               @unique
+  inventoryItems   InventoryItem[]
+  itemVariants     InventoryItemVariant[]
+}
+
+model InventoryCategory {
+  id             String          @id @default(uuid())
+  name           String          @unique
+  displayOrder   Int?
+  inventoryItems InventoryItem[]
+}
+
+model InventoryItem {
+  id             String                  @id @default(uuid())
+  name           String                  @unique
+  alternateNames InventoryAlternateName[]
+  categoryId     String
+  unitId         String
+  displayOrder   Int?
+  isActive       Boolean                 @default(true)
+  deletedAt      DateTime?               // soft delete
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+
+  category       InventoryCategory       @relation(fields: [categoryId], references: [id])
+  unit           Unit                    @relation(fields: [unitId], references: [id])
+  variants       InventoryItemVariant[]
+  parLevels      InventoryParLevel[]
+
+  @@index([categoryId])
+  @@index([unitId])
+  @@index([isActive])
+  @@index([deletedAt])
+}
+
+model InventoryAlternateName {
+  id              String         @id @default(uuid())
+  name            String
+  inventoryItemId String
+  inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
+
+  @@unique([name, inventoryItemId], name: "alternate_name_item_id_unique")
+}
+
+model InventoryItemVariant {
+  id               String   @id @default(uuid())
+  inventoryItemId  String
+  name             String
+  conversionRate   Float?
+  unitId           String?
+
+  inventoryItem    InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  unit             Unit?         @relation(fields: [unitId], references: [id])
+}
+
+model InventoryParLevel {
+  id              String   @id @default(uuid())
+  inventoryItemId String
+  dayOfWeek       Int      // 0 = Sunday, 6 = Saturday
+  parLevel        Float
+
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+
+  @@unique([inventoryItemId, dayOfWeek])
 }

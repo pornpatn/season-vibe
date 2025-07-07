@@ -2,8 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import PrivateRoute from '../components/PrivateRoute'
 import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
-import VitePage from '../pages/VitePage'
-// import InventoryPage from './pages/InventoryPage'
+import InventoryPage from '../pages/inventory/InventoryListPage'
 // import OrdersPage from './pages/OrdersPage'
 // import UsersPage from './pages/UsersPage'
 // import ReportsPage from './pages/ReportsPage'
@@ -12,9 +11,7 @@ import NotFoundPage from '../pages/NotFoundPage'
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public Route */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/vite" element={<VitePage />} />
 
       {/* Protected Routes */}
       <Route
@@ -25,7 +22,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      {/* <Route
+      <Route
         path="/inventory"
         element={
           <PrivateRoute>
@@ -33,7 +30,7 @@ export default function AppRoutes() {
           </PrivateRoute>
         }
       />
-      <Route
+      {/* <Route
         path="/orders"
         element={
           <PrivateRoute>

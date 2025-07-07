@@ -7,7 +7,6 @@ import {
   Drawer,
   IconButton,
   List,
-  ListItem,
   ListItemText,
   Toolbar,
   Typography,
@@ -71,7 +70,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   )
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', p: 0, height: '100vh', width: '100vw' }}>
       <CssBaseline />
 
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -120,14 +119,21 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Drawer>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar>
-          {error && (
-            <Typography color="error" sx={{ mt: 2 }}>
-              {error}
-            </Typography>
-          )}
-        </Toolbar>
+      <Box component="main" sx={{
+        flexGrow: 1,
+        p: 0,
+        width: { md: `calc(100% - ${drawerWidth}px)` },
+        // width: {
+        //   md: `calc(100% - ${drawerWidth}px)`,
+        //   lg: `calc(100%)px`
+        // },
+      }}>
+        <Toolbar />
+        {error && (
+          <Typography color="error" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
         {children}
       </Box>
     </Box>

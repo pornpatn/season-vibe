@@ -28,7 +28,7 @@ function LoginPage() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
+    <Container sx={{ mt: 10 }}>
       <Box
         component="form"
         onSubmit={handleLogin}
