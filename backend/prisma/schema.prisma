@@ -53,7 +53,9 @@ model InventoryCategory {
 model InventoryItem {
   id             String                  @id @default(uuid())
   name           String                  @unique
-  alternateNames InventoryAlternateName[]
+  alternateNames String?
+  description    String?
+  note           String?
   categoryId     String
   unitId         String
   displayOrder   Int?
@@ -71,15 +73,6 @@ model InventoryItem {
   @@index([unitId])
   @@index([isActive])
   @@index([deletedAt])
-}
-
-model InventoryAlternateName {
-  id              String         @id @default(uuid())
-  name            String
-  inventoryItemId String
-  inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
-
-  @@unique([name, inventoryItemId], name: "alternate_name_item_id_unique")
 }
 
 model InventoryItemVariant {

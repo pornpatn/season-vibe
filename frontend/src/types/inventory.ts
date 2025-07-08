@@ -1,15 +1,21 @@
 export interface InventoryItem {
   id: string
   name: string
-  alternateNames?: string[]
+  alternateNames?: string
+  description?: string
+  note?: string
   categoryId: string
   categoryName: string
+  categoryDisplayOrder?: number
+  unitId?: string
   isActive: boolean
-  parLevels: { [day: string]: number }
+  displayOrder?: number
+  parLevels: Record<string, number>
 }
 
-export interface InventoryCategory {
-  id: string
-  name: string
-  displayOrder: number
+export interface GroupedInventoryItems {
+  categoryId: string
+  categoryName: string
+  categoryDisplayOrder: number
+  items: InventoryItem[]
 }

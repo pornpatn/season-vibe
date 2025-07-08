@@ -1,4 +1,4 @@
-import api from '../axios'
+import api from './axios'
 import { useAuthStore } from '../stores/useAuthStore'
 
 // LOGIN

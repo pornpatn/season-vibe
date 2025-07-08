@@ -2,7 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import PrivateRoute from '../components/PrivateRoute'
 import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
-import InventoryPage from '../pages/inventory/InventoryListPage'
+import InventoryListPage from '../pages/inventory/InventoryListPage'
+import InventoryDetailPage from '../pages/inventory/InventoryDetailPage'
 // import OrdersPage from './pages/OrdersPage'
 // import UsersPage from './pages/UsersPage'
 // import ReportsPage from './pages/ReportsPage'
@@ -26,10 +27,11 @@ export default function AppRoutes() {
         path="/inventory"
         element={
           <PrivateRoute>
-            <InventoryPage />
+            <InventoryListPage />
           </PrivateRoute>
         }
       />
+      <Route path="/inventory/:id" element={<PrivateRoute><InventoryDetailPage /></PrivateRoute>} />
       {/* <Route
         path="/orders"
         element={

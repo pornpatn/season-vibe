@@ -1,6 +1,6 @@
 // src/axios.ts
 import axios from 'axios'
-import { useAuthStore } from './stores/useAuthStore'
+import { useAuthStore } from '../stores/useAuthStore'
 
 
 const API_BASE = import.meta.env.VITE_API_URL;

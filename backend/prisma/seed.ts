@@ -66,6 +66,13 @@ async function main() {
     }
   });
 
+  // Clear old data first
+  await prisma.inventoryParLevel.deleteMany()
+  await prisma.inventoryItemVariant.deleteMany()
+  await prisma.inventoryItem.deleteMany()
+  await prisma.inventoryCategory.deleteMany()
+  await prisma.unit.deleteMany()
+
   // Create default unit
   const defaultUnit = await prisma.unit.upsert({
     where: { name: 'each' },
@@ -85,7 +92,8 @@ async function main() {
   const categoryMap = Object.fromEntries(createdCategories.map(c => [c.name, c.id]))
 
   // Create inventory items
-  for (const name of itemNames) {
+  for (let i = 0; i < itemNames.length; i++) {
+    const name = itemNames[i]
     const categoryName = categories[Math.floor(Math.random() * categories.length)]
     await prisma.inventoryItem.create({
       data: {
@@ -93,22 +101,15 @@ async function main() {
         categoryId: categoryMap[categoryName],
         unitId: defaultUnit.id,
         isActive: true,
-        displayOrder: Math.floor(Math.random() * 100),
-        alternateNames: {
-          create: [
-            { name: `${name} alt` },
-          ]
-        },
+        displayOrder: i,
+        alternateNames: `${name} alt`,
+        description: `This is a description for ${name}.`,
+        note: `Note for item ${name}.`,
         parLevels: {
-          create: [
-            { dayOfWeek: 0, parLevel: 5 },
-            { dayOfWeek: 1, parLevel: 5 },
-            { dayOfWeek: 2, parLevel: 5 },
-            { dayOfWeek: 3, parLevel: 5 },
-            { dayOfWeek: 4, parLevel: 5 },
-            { dayOfWeek: 5, parLevel: 5 },
-            { dayOfWeek: 6, parLevel: 5 },
-          ]
+          create: Array.from({ length: 7 }).map((_, dayOfWeek) => ({
+            dayOfWeek,
+            parLevel: Math.floor(Math.random() * 10 + 1),
+          })),
         }
       }
     })
