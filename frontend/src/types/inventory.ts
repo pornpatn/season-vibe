@@ -19,3 +19,14 @@ export interface GroupedInventoryItems {
   categoryDisplayOrder: number
   items: InventoryItem[]
 }
+
+export interface InventoryCategory {
+  id: string
+  name: string
+  displayOrder?: number
+}
+
+export interface Unit {
+  id: string
+  name: string
+}

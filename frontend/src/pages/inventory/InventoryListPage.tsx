@@ -59,7 +59,7 @@ const InventoryListPage: React.FC = () => {
           <IconButton color="inherit" onClick={() => fetch()}>
             <RefreshIcon />
           </IconButton>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => navigate('/inventory/create')}>
             <AddIcon />
           </IconButton>
         </Toolbar>

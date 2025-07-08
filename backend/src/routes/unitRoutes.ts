@@ -1,0 +1,9 @@
+import express from 'express';
+import { getUnits } from '../controllers/unitController'; 
+import { authenticateToken } from '../middlewares/authMiddleware';
+
+const router = express.Router();
+
+router.get('/', authenticateToken, getUnits);
+
+export default router;

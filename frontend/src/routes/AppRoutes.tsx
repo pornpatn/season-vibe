@@ -4,6 +4,7 @@ import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
 import InventoryListPage from '../pages/inventory/InventoryListPage'
 import InventoryDetailPage from '../pages/inventory/InventoryDetailPage'
+import CreateInventoryItemPage from '../pages/inventory/CreateInventoryItemPage'
 // import OrdersPage from './pages/OrdersPage'
 // import UsersPage from './pages/UsersPage'
 // import ReportsPage from './pages/ReportsPage'
@@ -32,6 +33,7 @@ export default function AppRoutes() {
         }
       />
       <Route path="/inventory/:id" element={<PrivateRoute><InventoryDetailPage /></PrivateRoute>} />
+      <Route path="/inventory/create" element={<PrivateRoute><CreateInventoryItemPage /></PrivateRoute>} />
       {/* <Route
         path="/orders"
         element={
