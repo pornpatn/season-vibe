@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '../stores/useAuthStore';
-import MainLayout from '../layouts/MainLayout';
+import { useAuthStore } from '../stores/authStore';
 
 type Props = {
   children: React.ReactNode;
@@ -14,9 +13,5 @@ export default function PrivateRoute({ children }: Props) {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    <MainLayout>
-      {children}
-    </MainLayout>
-  );
+  return children;
 }

@@ -1,8 +1,9 @@
 // src/components/AppInitializer.tsx
 import { useEffect, useState } from 'react'
-import { refreshToken } from '../services/authService'
+import { refreshToken, getCurrentUser } from '../services/authService'
 import { useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
+import { useAuthStore } from '../stores/authStore'
 
 const AppInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true)
@@ -11,7 +12,13 @@ const AppInitializer: React.FC<{ children: React.ReactNode }> = ({ children }) =
   useEffect(() => {
     const init = async () => {
       try {
-        await refreshToken()
+        const { accessToken, setAccessToken, setUser } = useAuthStore.getState();
+        if (!accessToken) {
+        const token = await refreshToken()
+        const user = await getCurrentUser()
+        setAccessToken(token);
+        setUser(user);
+        }
       } catch {
         navigate('/login')
       } finally {

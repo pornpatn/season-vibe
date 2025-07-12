@@ -13,7 +13,7 @@ export const signIn = async (req: Request, res: Response) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
-  
+
   const payload = { userId: user.id, role: user.role.name };
 
   const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
@@ -26,7 +26,16 @@ export const signIn = async (req: Request, res: Response) => {
     maxAge: 90 * 24 * 60 * 60 * 1000
   });
 
-  res.json({ accessToken });
+  res.json({
+    accessToken,
+    user: {
+      id: user.id,
+      name: user.username,
+      email: user.email,
+      role: user.role,
+      isTemporaryPassword: user.isTemporaryPassword,
+    }
+  });
 };
 
 export const logout = (_req: Request, res: Response) => {
@@ -71,7 +80,18 @@ export const resetPassword = async (req: any, res: Response) => {
 
 
 export const getMe = async (req: any, res: Response) => {
-  const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.userId },
+    include: { role: true }
+  });
   if (!user) return res.status(404).json({ message: 'User not found' });
-  res.json({ id: user.id, username: user.username, role: user.roleId });
+  res.json({
+    user: {
+      id: user.id,
+      name: user.username,
+      email: user.email,
+      role: user.role,
+      isTemporaryPassword: user.isTemporaryPassword,
+    }
+  });
 };

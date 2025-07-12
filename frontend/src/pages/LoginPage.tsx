@@ -10,6 +10,7 @@ import {
   Typography
 } from '@mui/material'
 import { login } from '../services/authService'
+import { useAuthStore } from '../stores/authStore'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -20,7 +21,8 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(username, password);
+      const { user, accessToken } = await login(username, password);
+      useAuthStore.getState().login(user, accessToken);
       navigate('/');
     } catch (err) {
       setError('Login failed. Please check credentials.');

@@ -18,20 +18,23 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import { useNavigate } from 'react-router-dom'
-import { logout } from '../services/authService'
+import { useAuthStore } from '../stores/authStore'
 
 const drawerWidth = 240
 
 interface MainLayoutProps {
   children: React.ReactNode
+  pageTitle?: React.ReactNode
+  actions?: React.ReactNode
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, pageTitle, actions }) => {
   const navigate = useNavigate()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { user, logout } = useAuthStore()
   const [error, setError] = useState('')
 
   const handleDrawerToggle = () => {
@@ -55,9 +58,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     { text: 'Users', path: '/users' },
   ]
 
+  console.log('user: ', user);
+  
   const drawer = (
     <Box onClick={isMobile ? handleDrawerToggle : undefined} sx={{ width: drawerWidth }}>
       <Toolbar />
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h6">Season-Vibe</Typography>
+      </Box>
       <Divider />
       <List>
         {menuItems.map((item) => (
@@ -66,6 +74,20 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </ListItemButton>
         ))}
       </List>
+      <Box sx={{ flexGrow: 1 }} />
+      <Divider />
+      <Box sx={{ p: 2 }}>
+        {user && (
+          <>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Logged in as: {user.name}
+            </Typography>
+            <Button variant="outlined" fullWidth onClick={handleLogout}>
+              Logout
+            </Button>
+          </>
+        )}
+      </Box>
     </Box>
   )
 
@@ -85,11 +107,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-            Season Vibe
+            {pageTitle || 'Season-Vibe'}
           </Typography>
-          <Button color="inherit" onClick={handleLogout}>
-            Logout
-          </Button>
+          {actions}
         </Toolbar>
       </AppBar>
 
@@ -119,16 +139,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Drawer>
       )}
 
-      <Box component="main" sx={{
-        flexGrow: 1,
-        p: 0,
-        width: { md: `calc(100% - ${drawerWidth}px)` },
-        // width: {
-        //   md: `calc(100% - ${drawerWidth}px)`,
-        //   lg: `calc(100%)px`
-        // },
-      }}>
-        <Toolbar />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 0,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          mt: 8,
+          // width: { md: `calc(100% - ${drawerWidth}px)` },
+          // width: {
+          //   md: `calc(100% - ${drawerWidth}px)`,
+          //   lg: `calc(100%)px`
+          // },
+        }}>
         {error && (
           <Typography color="error" sx={{ mt: 2 }}>
             {error}
