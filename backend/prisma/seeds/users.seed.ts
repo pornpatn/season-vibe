@@ -8,19 +8,20 @@ export default async function seedUsers(prisma: PrismaClient) {
   const passwordHash = await bcrypt.hash('changeme123', 10);
 
   const users = [
-    { username: 'owner1', role: 'Owner' },
-    { username: 'admin1', role: 'Admin' },
-    { username: 'manager1', role: 'Manager' },
-    { username: 'staff1', role: 'Staff' },
+    { username: 'owner1', name: 'Owner One', role: 'Owner' },
+    { username: 'admin1', name: 'Admin One', role: 'Admin' },
+    { username: 'manager1', name: 'Manager One', role: 'Manager' },
+    { username: 'staff1', name: 'Staff One', role: 'Staff' },
   ];
 
-  for (const { username, role } of users) {
+  for (const { username, name, role } of users) {
     await prisma.user.upsert({
       where: { username },
       update: {},
       create: {
         username,
         passwordHash,
+        name,
         roleId: roleMap[role],
         isTemporaryPassword: true,
         isActive: true,
