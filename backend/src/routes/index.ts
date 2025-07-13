@@ -1,16 +1,14 @@
-import express from 'express';
-import authRoutes from './authRoutes';
-import userRoutes from './userRoutes';
-import inventoryRoutes from './inventoryRoutes';
-import inventoryCategoryRoutes from './inventoryCategoryRoutes'
-import unitRoutes from './unitRoutes';
-import { authenticateToken } from '../middlewares/authMiddleware';
+import { Router } from 'express';
+import authRoutes from '../modules/auth/auth.routes';
+import userRoutes from '../modules/users/user.routes';
+import roleRoutes from '../modules/roles/role.routes';
+import permissionRoutes from '../modules/permissions/permission.routes';
 
-const router = express.Router();
+const router = Router();
+
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
-router.use('/inventory-items', inventoryRoutes);
-router.use('/inventory-categories', inventoryCategoryRoutes);
-router.use('/units', unitRoutes);
+router.use('/roles', roleRoutes);
+router.use('/permissions', permissionRoutes);
 
 export default router;

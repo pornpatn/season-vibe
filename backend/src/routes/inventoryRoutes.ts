@@ -6,7 +6,7 @@ import {
   updateInventoryItem,
   deleteInventoryItem
 } from '../controllers/inventoryController';
-import { authenticateToken } from '../middlewares/authMiddleware';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = express.Router();
 

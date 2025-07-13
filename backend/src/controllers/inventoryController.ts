@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { prisma } from '../utils/prisma';
+import { prisma } from '../prisma';
 
 const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 const reverseDayMap = dayMap.reduce((acc, day, index) => {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { prisma } from '../utils/prisma';
+import { prisma } from '../prisma';
 
 export const getUnits = async (req: Request, res: Response) => {
   const units = await prisma.unit.findMany({

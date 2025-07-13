@@ -1,6 +1,6 @@
 import express from 'express';
 import { getUnits } from '../controllers/unitController'; 
-import { authenticateToken } from '../middlewares/authMiddleware';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
