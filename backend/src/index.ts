@@ -1,23 +1,9 @@
-import express from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import routes from './routes';
+import app from './app';
 
 dotenv.config();
-const app = express();
 
-// ✅ Allow requests from frontend
-app.use(cors({
-  origin: 'http://localhost:5173', // or use "*" to allow all (not recommended for production)
-  credentials: true
-}));
-
-app.use(express.json());
-app.use(cookieParser());
-app.use('/api', routes);
-
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

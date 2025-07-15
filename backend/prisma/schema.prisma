@@ -8,91 +8,248 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(uuid())
+  id                  String   @id @default(cuid())
   username            String   @unique
-  email               String?  @unique
-  password            String
+  name                String
+  email               String?
+  phoneNumber         String?
+  passwordHash        String
+  isTemporaryPassword Boolean  @default(false)
+  isActive            Boolean  @default(true)
+  lastAccessAt        DateTime?
+  notes               String?
   roleId              String
   role                Role     @relation(fields: [roleId], references: [id])
-  isActive            Boolean  @default(true)
-  isTemporaryPassword Boolean  @default(false)
+  checklistSections  ChecklistSection[]
+  checklistCorrections ChecklistCorrection[]
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
 
 model Role {
-  id          String       @id @default(uuid())
+  id          String       @id @default(cuid())
   name        String       @unique
   users       User[]
-  permissions Permission[] @relation("RolePermissions")
+  permissions Permission[]
 }
 
 model Permission {
-  id       String  @id @default(uuid())
-  module   String
-  action   String
-  roles    Role[]  @relation("RolePermissions")
+  id      String         @id @default(cuid())
+  roleId  String
+  role    Role           @relation(fields: [roleId], references: [id])
+  module  String
+  action  String
 
-  @@unique([module, action], name: "module_action")
+  @@unique([roleId, module, action])
+}
+
+model Location {
+  id                        String                     @id @default(cuid())
+  name                      String
+  inventoryLocationItems    InventoryLocationItem[]
+  checklists                Checklist[]
+  sectionTemplates          ChecklistSectionTemplate[]
+  vendorOrders              VendorOrder[]
+}
+
+model Category {
+  id               String            @id @default(cuid())
+  name             String
+  displayOrder     Int               @default(0)
+  inventoryItems   InventoryItem[]
 }
 
 model Unit {
-  id               String               @id @default(uuid())
-  name             String               @unique
-  inventoryItems   InventoryItem[]
-  itemVariants     InventoryItemVariant[]
-}
-
-model InventoryCategory {
-  id             String          @id @default(uuid())
-  name           String          @unique
-  displayOrder   Int?
-  inventoryItems InventoryItem[]
+  id                    String                 @id @default(cuid())
+  name                  String                 @unique
+  inventoryItems        InventoryItem[]
+  inventoryPrepForms    InventoryPrepForm[]
+  vendorOrderItems      VendorOrderItem[]
 }
 
 model InventoryItem {
-  id             String                  @id @default(uuid())
-  name           String                  @unique
-  alternateNames String?
-  description    String?
-  note           String?
-  categoryId     String
-  unitId         String
-  displayOrder   Int?
-  isActive       Boolean                 @default(true)
-  deletedAt      DateTime?               // soft delete
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-
-  category       InventoryCategory       @relation(fields: [categoryId], references: [id])
-  unit           Unit                    @relation(fields: [unitId], references: [id])
-  variants       InventoryItemVariant[]
-  parLevels      InventoryParLevel[]
-
-  @@index([categoryId])
-  @@index([unitId])
-  @@index([isActive])
-  @@index([deletedAt])
+  id                     String                  @id @default(cuid())
+  name                   String
+  alternateNames         String?
+  description            String?
+  note                   String?
+  isActive               Boolean                 @default(true)
+  displayOrder           Int                     @default(0)
+  categoryId             String
+  unitId                 String
+  category               Category                @relation(fields: [categoryId], references: [id])
+  unit                   Unit                    @relation(fields: [unitId], references: [id])
+  inventoryLocationItems InventoryLocationItem[]
+  inventoryPrepForms     InventoryPrepForm[]
+  parLevels              ParLevel[]
+  inventoryPhotos        InventoryPhoto[]
+  checklistItems         ChecklistItem[]
+  itemTemplates          ChecklistItemTemplate[]
+  vendorItems            VendorItem[]
+  vendorOrderItems       VendorOrderItem[]
 }
 
-model InventoryItemVariant {
-  id               String   @id @default(uuid())
-  inventoryItemId  String
-  name             String
-  conversionRate   Float?
-  unitId           String?
-
-  inventoryItem    InventoryItem @relation(fields: [inventoryItemId], references: [id])
-  unit             Unit?         @relation(fields: [unitId], references: [id])
-}
-
-model InventoryParLevel {
-  id              String   @id @default(uuid())
+model InventoryPhoto {
+  id              String         @id @default(cuid())
   inventoryItemId String
-  dayOfWeek       Int      // 0 = Sunday, 6 = Saturday
-  parLevel        Float
+  url             String
+  description     String?
+  inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
+}
 
-  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+model InventoryLocationItem {
+  id              String          @id @default(cuid())
+  inventoryItemId String
+  locationId      String
+  inventoryItem   InventoryItem   @relation(fields: [inventoryItemId], references: [id])
+  location        Location        @relation(fields: [locationId], references: [id])
+}
+
+model InventoryPrepForm {
+  id              String         @id @default(cuid())
+  inventoryItemId String
+  name            String
+  conversionRate  Float
+  unitId          String
+  inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
+  checklistItems  ChecklistItem[]
+  unit            Unit           @relation(fields: [unitId], references: [id])
+}
+
+model ParLevel {
+  id              String          @id @default(cuid())
+  inventoryItemId String
+  dayOfWeek       Int             // 0 = Sunday
+  amount          Float
+  inventoryItem   InventoryItem   @relation(fields: [inventoryItemId], references: [id])
 
   @@unique([inventoryItemId, dayOfWeek])
+}
+
+model Checklist {
+  id          String             @id @default(cuid())
+  date        DateTime
+  locationId  String
+  status      String             // draft, in_progress, completed
+  location    Location           @relation(fields: [locationId], references: [id])
+  sections    ChecklistSection[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model ChecklistSection {
+  id                 String                  @id @default(cuid())
+  checklistId        String
+  sectionTemplateId  String?
+  name               String
+  userId             String?
+  checklist          Checklist               @relation(fields: [checklistId], references: [id])
+  sectionTemplate    ChecklistSectionTemplate? @relation(fields: [sectionTemplateId], references: [id])
+  user               User?                   @relation(fields: [userId], references: [id])
+  checklistItems     ChecklistItem[]
+}
+
+model ChecklistItem {
+  id                  String                   @id @default(cuid())
+  checklistSectionId  String
+  inventoryItemId     String
+  itemTemplateId      String?
+  prepFormId          String?    // null if no prep form
+  prepForm            InventoryPrepForm? @relation(fields: [prepFormId], references: [id])
+  counted             Float?
+  note                String?
+  checklistSection    ChecklistSection         @relation(fields: [checklistSectionId], references: [id])
+  inventoryItem       InventoryItem            @relation(fields: [inventoryItemId], references: [id])
+  itemTemplate        ChecklistItemTemplate?   @relation(fields: [itemTemplateId], references: [id])
+  corrections         ChecklistCorrection[]
+}
+
+model ChecklistCorrection {
+  id                String          @id @default(cuid())
+  checklistItemId   String
+  correctedById     String
+  originalValue     Float?
+  correctedValue    Float?
+  note              String?
+  createdAt         DateTime        @default(now())
+  checklistItem     ChecklistItem   @relation(fields: [checklistItemId], references: [id])
+  correctedBy       User            @relation(fields: [correctedById], references: [id])
+}
+
+model ChecklistSectionTemplate {
+  id                   String                   @id @default(cuid())
+  name                 String
+  locationId           String
+  displayOrder         Int                      @default(0)
+  location             Location                 @relation(fields: [locationId], references: [id])
+  itemTemplates        ChecklistItemTemplate[]
+  checklistSections    ChecklistSection[]
+}
+
+model ChecklistItemTemplate {
+  id                    String                    @id @default(cuid())
+  inventoryItemId       String
+  sectionTemplateId     String
+  displayOrder          Int                       @default(0)
+  inventoryItem         InventoryItem             @relation(fields: [inventoryItemId], references: [id])
+  sectionTemplate       ChecklistSectionTemplate  @relation(fields: [sectionTemplateId], references: [id])
+  checklistItems        ChecklistItem[]
+}
+
+model Vendor {
+  id             String            @id @default(cuid())
+  name           String
+  isShopping     Boolean           @default(false)
+  contacts       VendorContact[]
+  vendorItems    VendorItem[]
+  vendorOrders   VendorOrder[]
+}
+
+model VendorContact {
+  id        String   @id @default(cuid())
+  vendorId  String
+  name      String
+  role      String
+  phone     String?
+  email     String?
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+}
+
+model VendorItem {
+  id              String           @id @default(cuid())
+  vendorId        String
+  inventoryItemId String
+  vendorName      String?
+  vendorNote      String?
+  vendor          Vendor           @relation(fields: [vendorId], references: [id])
+  inventoryItem   InventoryItem    @relation(fields: [inventoryItemId], references: [id])
+}
+
+model VendorOrder {
+  id             String             @id @default(cuid())
+  vendorId       String
+  locationId     String
+  isShopping     Boolean            @default(false)
+  marketName     String?
+  expectedDate   DateTime?
+  orderedDate    DateTime?
+  status         String             // draft, submitted, received, cancelled
+  note           String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  vendor         Vendor             @relation(fields: [vendorId], references: [id])
+  location       Location           @relation(fields: [locationId], references: [id])
+  items          VendorOrderItem[]
+}
+
+model VendorOrderItem {
+  id              String           @id @default(cuid())
+  vendorOrderId   String
+  inventoryItemId String
+  quantity        Float
+  unitId          String?
+  note            String?
+  vendorOrder     VendorOrder      @relation(fields: [vendorOrderId], references: [id])
+  inventoryItem   InventoryItem    @relation(fields: [inventoryItemId], references: [id])
+  unit            Unit?            @relation(fields: [unitId], references: [id])
 }

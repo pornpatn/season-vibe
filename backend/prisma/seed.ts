@@ -1,127 +1,115 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-const categories = [
-  'Vegetables',
-  'Meats',
-  'Dry Goods',
-  'Beverages',
-  'Frozen Items',
-]
-
-const itemNames = [
-  'Carrot', 'Cabbage', 'Chicken Breast', 'Ground Pork', 'Tofu', 'Soy Sauce', 'Fish Sauce',
-  'Basil', 'Bell Pepper', 'Onion', 'Garlic', 'Ginger', 'Lime', 'Lemongrass', 'Shrimp',
-  'Squid', 'Green Curry Paste', 'Red Curry Paste', 'Coconut Milk', 'Peanut Butter',
-  'Rice Noodles', 'Egg Noodles', 'Jasmine Rice', 'Sticky Rice', 'Palm Sugar',
-  'Brown Sugar', 'Tamarind Paste', 'Chili Flakes', 'Chili Sauce', 'Fried Shallots',
-  'Cashew Nut', 'Peanuts', 'Green Onion', 'Mint', 'Iceberg Lettuce', 'Cucumber',
-  'Tomato', 'Corn', 'Canned Pineapple', 'Canned Lychee', 'Evaporated Milk', 'Condensed Milk',
-  'Thai Iced Tea Mix', 'Coffee Powder', 'Black Tea Bags', 'Soda Water', 'Club Soda',
-  'Mineral Water', 'Coconut Water', 'Soy Milk', 'Energy Drink', 'Beer', 'White Wine',
-  'Red Wine', 'Whiskey', 'Ice Cubes', 'Frozen Mango', 'Frozen Coconut Meat', 'Frozen Mixed Veggies'
-]
-
 async function main() {
-  // Create permissions
-  const permissions = [
-    { module: 'user', action: 'view' },
-    { module: 'user', action: 'edit' }
-  ];
+  console.log('Seeding database...');
+  await (await import('./seeds/roles.seed')).default(prisma);
+  await (await import('./seeds/permissions.seed')).default(prisma);
+  await (await import('./seeds/users.seed')).default(prisma);
 
-  const createdPermissions = await Promise.all(
-    permissions.map(p =>
-      prisma.permission.upsert({
-        where: { module_action: { module: p.module, action: p.action } },
-        update: {},
-        create: p
-      })
-    )
-  );
-
-  // Create admin role
-  const adminRole = await prisma.role.upsert({
-    where: { name: 'Admin' },
-    update: {},
-    create: {
-      name: 'Admin',
-      permissions: {
-        connect: createdPermissions.map(p => ({ id: p.id }))
-      }
-    }
+// Locations
+  await prisma.location.createMany({
+    data: [
+      { id: 'loc_1', name: 'Main Restaurant' },
+      { id: 'loc_2', name: 'Warehouse' }
+    ]
   });
 
-  // Create admin user
-  const passwordHash = await bcrypt.hash('admin123', 10);
-  await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: {
-      username: 'admin',
-      email: 'admin@example.com',
-      password: passwordHash,
-      roleId: adminRole.id
-    }
+  // Vendors
+  await prisma.vendor.createMany({
+    data: [
+      { id: 'vend_1', name: 'Sysco', isShopping: false },
+      { id: 'vend_2', name: 'Costco', isShopping: true }
+    ]
   });
 
-  // Clear old data first
-  await prisma.inventoryParLevel.deleteMany()
-  await prisma.inventoryItemVariant.deleteMany()
-  await prisma.inventoryItem.deleteMany()
-  await prisma.inventoryCategory.deleteMany()
-  await prisma.unit.deleteMany()
+  // Units
+  await prisma.unit.createMany({
+    data: [
+      { id: 'unit_1', name: 'case' },
+      { id: 'unit_2', name: 'bag' },
+      { id: 'unit_3', name: 'each' }
+    ]
+  });
 
-  // Create default unit
-  const defaultUnit = await prisma.unit.upsert({
-    where: { name: 'each' },
-    update: {},
-    create: { name: 'each' },
-  })
+  // Categories
+  await prisma.category.createMany({
+    data: [
+      { id: 'cat_1', name: 'Meat', displayOrder: 1 },
+      { id: 'cat_2', name: 'Vegetables', displayOrder: 2 }
+    ]
+  });
 
-  // Create categories
-  const createdCategories = await Promise.all(
-    categories.map(name =>
-      prisma.inventoryCategory.create({
-        data: { name },
-      })
-    )
-  )
+  // Inventory Items
+  await prisma.inventoryItem.createMany({
+    data: [
+      { id: 'item_1', name: 'Chicken Thigh', categoryId: 'cat_1', unitId: 'unit_1' },
+      { id: 'item_2', name: 'Carrot', categoryId: 'cat_2', unitId: 'unit_2' }
+    ]
+  });
 
-  const categoryMap = Object.fromEntries(createdCategories.map(c => [c.name, c.id]))
+  // Vendor Items
+  await prisma.vendorItem.createMany({
+    data: [
+      { vendorId: 'vend_1', inventoryItemId: 'item_1', vendorName: 'CTK-40', vendorNote: '40lb frozen' },
+      { vendorId: 'vend_2', inventoryItemId: 'item_2', vendorName: 'Carrot Bulk', vendorNote: '10 lb bag' }
+    ]
+  });
 
-  // Create inventory items
-  for (let i = 0; i < itemNames.length; i++) {
-    const name = itemNames[i]
-    const categoryName = categories[Math.floor(Math.random() * categories.length)]
-    await prisma.inventoryItem.create({
-      data: {
-        name,
-        categoryId: categoryMap[categoryName],
-        unitId: defaultUnit.id,
-        isActive: true,
-        displayOrder: i,
-        alternateNames: `${name} alt`,
-        description: `This is a description for ${name}.`,
-        note: `Note for item ${name}.`,
-        parLevels: {
-          create: Array.from({ length: 7 }).map((_, dayOfWeek) => ({
-            dayOfWeek,
-            parLevel: Math.floor(Math.random() * 10 + 1),
-          })),
-        }
+  // Vendor Orders
+  await prisma.vendorOrder.createMany({
+    data: [
+      {
+        id: 'ord_1',
+        vendorId: 'vend_1',
+        locationId: 'loc_1',
+        isShopping: false,
+        expectedDate: new Date('2025-07-15'),
+        orderedDate: new Date('2025-07-14T12:00:00'),
+        status: 'submitted',
+        note: 'Weekly Sysco delivery'
+      },
+      {
+        id: 'ord_2',
+        vendorId: 'vend_2',
+        locationId: 'loc_1',
+        isShopping: true,
+        marketName: 'Costco (Aliso Viejo)',
+        expectedDate: new Date('2025-07-15'),
+        orderedDate: new Date('2025-07-15T08:00:00'),
+        status: 'submitted',
+        note: 'Costco restock run'
       }
-    })
-  }
+    ]
+  });
+
+  // Vendor Order Items
+  await prisma.vendorOrderItem.createMany({
+    data: [
+      {
+        vendorOrderId: 'ord_1',
+        inventoryItemId: 'item_1',
+        quantity: 2,
+        unitId: 'unit_1',
+        note: 'Fresh batch preferred'
+      },
+      {
+        vendorOrderId: 'ord_2',
+        inventoryItemId: 'item_2',
+        quantity: 3,
+        unitId: 'unit_2',
+        note: 'Look for organic if possible'
+      }
+    ]
+  });
+
+  console.log('✅ Seeding completed.');
 }
 
 main()
-  .then(() => {
-    console.log('✅ Seed complete')
-    return prisma.$disconnect()
+  .catch((e) => {
+    console.error('❌ Seed failed:', e);
+    process.exit(1);
   })
-  .catch(e => {
-    console.error(e)
-    return prisma.$disconnect().finally(() => process.exit(1))
-  })
+  .finally(() => prisma.$disconnect());

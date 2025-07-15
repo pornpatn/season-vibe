@@ -138,3 +138,5 @@ dist
 /backend/prisma/migrations
 backend/prisma/dev.db
 
+backend/prisma/test.db
+backend/prisma/dev.db-journal
