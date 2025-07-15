@@ -112,6 +112,7 @@ model InventoryPrepForm {
   conversionRate  Float
   unitId          String
   inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
+  checklistItems  ChecklistItem[]
   unit            Unit           @relation(fields: [unitId], references: [id])
 }
 
@@ -121,6 +122,8 @@ model ParLevel {
   dayOfWeek       Int             // 0 = Sunday
   amount          Float
   inventoryItem   InventoryItem   @relation(fields: [inventoryItemId], references: [id])
+
+  @@unique([inventoryItemId, dayOfWeek])
 }
 
 model Checklist {
@@ -151,6 +154,8 @@ model ChecklistItem {
   checklistSectionId  String
   inventoryItemId     String
   itemTemplateId      String?
+  prepFormId          String?    // null if no prep form
+  prepForm            InventoryPrepForm? @relation(fields: [prepFormId], references: [id])
   counted             Float?
   note                String?
   checklistSection    ChecklistSection         @relation(fields: [checklistSectionId], references: [id])
