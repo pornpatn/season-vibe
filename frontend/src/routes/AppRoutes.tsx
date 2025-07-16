@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import PrivateRoute from '../components/PrivateRoute'
+import ProtectedRoute from '../components/ProtectedRoute'
 import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
 import InventoryListPage from '../pages/inventory/InventoryListPage'
@@ -19,21 +19,21 @@ export default function AppRoutes() {
       <Route
         path="/"
         element={
-          <PrivateRoute>
+          <ProtectedRoute>
             <HomePage />
-          </PrivateRoute>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/inventory"
         element={
-          <PrivateRoute>
+          <ProtectedRoute>
             <InventoryListPage />
-          </PrivateRoute>
+          </ProtectedRoute>
         }
       />
-      <Route path="/inventory/:id" element={<PrivateRoute><InventoryDetailPage /></PrivateRoute>} />
-      <Route path="/inventory/create" element={<PrivateRoute><CreateInventoryItemPage /></PrivateRoute>} />
+      <Route path="/inventory/:id" element={<ProtectedRoute><InventoryDetailPage /></ProtectedRoute>} />
+      <Route path="/inventory/create" element={<ProtectedRoute><CreateInventoryItemPage /></ProtectedRoute>} />
       {/* <Route
         path="/orders"
         element={

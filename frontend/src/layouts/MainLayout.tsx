@@ -19,6 +19,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
+import { logout } from '../services/authService'
 
 const drawerWidth = 240
 
@@ -34,7 +35,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, pageTitle, actions })
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { user, logout } = useAuthStore()
+  const { user, clearAuth } = useAuthStore()
   const [error, setError] = useState('')
 
   const handleDrawerToggle = () => {
@@ -43,7 +44,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, pageTitle, actions })
 
   const handleLogout = async () => {
     try {
-      logout();
+      await logout();
+      clearAuth();
       navigate('/login');
     } catch (err) {
       setError('Login failed. Please check credentials.');

@@ -1,39 +1,22 @@
 import { create } from 'zustand'
-
-type Role = 'owner' | 'admin' | 'manager' | 'staff'
-
-export interface User {
-  id: string
-  name: string
-  role: Role
-  email?: string
-  isTemporaryPassword?: boolean
-}
+import type { User } from '../types/User';
+// import type { Permission } from '../types/Permission';
 
 interface AuthState {
-  user: User | null
   accessToken: string | null
-  login: (user: User, token: string) => void
-  logout: () => void
-  setUser: (user: User) => void
-  setAccessToken: (token: string) => void
+  user: User | null
+  isLoading: boolean
+  setAuth: (accessToken: string, user: User) => void
+  clearAuth: () => void
 }
 
-export const useAuthStore = create<AuthState>(set => ({
-  user: null,
+export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
-
-  login: (user, token) => {
-    set({ user, accessToken: token })
-  },
-
-  logout: () => {
-    set({ user: null, accessToken: null })
-  },
-
-  setUser: (user) => set({ user }),
-
-  setAccessToken: (token) => {
-    set({ accessToken: token })
-  },
+  user: null,
+  permissions: [],
+  isLoading: true,
+  setAuth: (token, user) =>
+    set({ accessToken: token, user, isLoading: false }),
+  clearAuth: () =>
+    set({ accessToken: null, user: null, isLoading: false }),
 }))

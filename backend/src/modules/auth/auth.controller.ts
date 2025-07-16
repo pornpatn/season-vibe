@@ -20,6 +20,7 @@ export async function login(req: Request, res: Response) {
     httpOnly: true,
     secure: process.env.COOKIE_SECURE === 'true',
     sameSite: process.env.COOKIE_SAMESITE || 'strict',
+    path: '/',
   } as CookieOptions);
 
   res.json({ accessToken: result.accessToken, user: result.user });
@@ -30,6 +31,7 @@ export function logout(req: Request, res: Response) {
     httpOnly: true,
     secure: process.env.COOKIE_SECURE === 'true',
     sameSite: process.env.COOKIE_SAMESITE || 'strict',
+    path: '/',
   } as CookieOptions);
 
   res.json({ message: 'Logged out' });

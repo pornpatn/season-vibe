@@ -1,26 +1,33 @@
 import api from './axios'
-import { useAuthStore } from '../stores/authStore'
 
 // LOGIN
 export const login = async (username: string, password: string) => {
-  const res = await api.post('/auth/signin', { username, password })
-  return res.data
+  const res = await api.post('/auth/login',
+    { username, password },
+    { withCredentials: true },
+  )
+  return res
 }
 
 // REFRESH TOKEN
 export const refreshToken = async () => {
-  const res = await api.post('/auth/refresh', {})
-  useAuthStore.getState().setAccessToken(res.data.accessToken)
-  return res.data.accessToken
+  const res = await api.post('/auth/refresh-token',
+    {},
+    { withCredentials: true },
+  )
+  return res
 }
 
 // LOGOUT
 export const logout = async () => {
-  await api.post('/auth/logout')
+  await api.post('/auth/logout',
+    {},
+    { withCredentials: true },
+  )
 }
 
 // CHECK LOGIN
 export const getCurrentUser = async () => {
   const res = await api.get('/auth/me')
-  return res.data.user
+  return res
 }

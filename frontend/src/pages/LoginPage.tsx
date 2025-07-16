@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   useNavigate
 } from 'react-router-dom'
@@ -14,15 +14,23 @@ import { useAuthStore } from '../stores/authStore'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const { user, setAuth } = useAuthStore()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    if (user) {
+      navigate('/') // or '/dashboard'
+    }
+  }, [user, navigate])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { user, accessToken } = await login(username, password);
-      useAuthStore.getState().login(user, accessToken);
+      const loginRes = await login(username, password);
+      const { accessToken, user }  = loginRes.data;
+      setAuth(accessToken, user);
       navigate('/');
     } catch (err) {
       setError('Login failed. Please check credentials.');
