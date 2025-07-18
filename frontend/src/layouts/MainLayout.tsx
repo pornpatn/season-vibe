@@ -60,8 +60,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, pageTitle, actions })
     { text: 'Users', path: '/users' },
   ]
 
-  console.log('user: ', user);
-  
   const drawer = (
     <Box onClick={isMobile ? handleDrawerToggle : undefined} sx={{ width: drawerWidth }}>
       <Toolbar />

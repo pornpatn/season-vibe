@@ -45,7 +45,7 @@ model Permission {
 
 model Location {
   id                        String                     @id @default(cuid())
-  name                      String
+  name                      String                     @unique
   inventoryLocationItems    InventoryLocationItem[]
   checklists                Checklist[]
   sectionTemplates          ChecklistSectionTemplate[]
@@ -54,7 +54,7 @@ model Location {
 
 model Category {
   id               String            @id @default(cuid())
-  name             String
+  name             String            @unique
   displayOrder     Int               @default(0)
   inventoryItems   InventoryItem[]
 }

@@ -2,9 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from '../components/ProtectedRoute'
 import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
-import InventoryListPage from '../pages/inventory/InventoryListPage'
-import InventoryDetailPage from '../pages/inventory/InventoryDetailPage'
-import CreateInventoryItemPage from '../pages/inventory/CreateInventoryItemPage'
+import InventoryListPage from '../features/inventory/InventoryListPage'
+import InventoryItemDetailPage from '../features/inventory/InventoryItemDetailPage'
+import CreateInventoryItemPage from '../features/inventory/CreateInventoryItemPage'
 // import OrdersPage from './pages/OrdersPage'
 // import UsersPage from './pages/UsersPage'
 // import ReportsPage from './pages/ReportsPage'
@@ -32,7 +32,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/inventory/:id" element={<ProtectedRoute><InventoryDetailPage /></ProtectedRoute>} />
+      <Route path="/inventory/:id" element={<ProtectedRoute><InventoryItemDetailPage /></ProtectedRoute>} />
       <Route path="/inventory/create" element={<ProtectedRoute><CreateInventoryItemPage /></ProtectedRoute>} />
       {/* <Route
         path="/orders"

@@ -7,6 +7,8 @@ export const getAllInventoryItems = async () => {
     include: {
       category: true,
       unit: true,
+      parLevels: true,
+      inventoryPrepForms: true,
     },
     orderBy: {
       displayOrder: 'asc',
@@ -20,6 +22,8 @@ export const getInventoryItemById = async (id: string) => {
     include: {
       category: true,
       unit: true,
+      parLevels: true,
+      inventoryPrepForms: true,
     },
   });
 };

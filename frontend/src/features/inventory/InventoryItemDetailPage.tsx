@@ -14,11 +14,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import EditIcon from '@mui/icons-material/Edit'
 import { useInventoryStore } from '../../stores/inventoryStore'
 
-const InventoryDetailPage: React.FC = () => {
+const InventoryItemDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { items } = useInventoryStore()
 
+  const { items } = useInventoryStore()
   const item = items.find(i => i.id === id)
 
   if (!item) {
@@ -30,7 +30,7 @@ const InventoryDetailPage: React.FC = () => {
   }
 
   return (
-    <Box>
+    <Box p={2}>
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={() => navigate(-1)}>
@@ -46,7 +46,7 @@ const InventoryDetailPage: React.FC = () => {
       <Box p={2}>
         <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
           <Typography variant="subtitle2">Category</Typography>
-          <Typography>{item.categoryName}</Typography>
+          <Typography>{item.category.name}</Typography>
         </Paper>
 
         <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
@@ -89,4 +89,4 @@ const InventoryDetailPage: React.FC = () => {
   )
 }
 
-export default InventoryDetailPage
+export default InventoryItemDetailPage

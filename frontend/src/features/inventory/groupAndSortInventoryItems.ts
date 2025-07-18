@@ -1,8 +1,8 @@
-import type { InventoryItem, GroupedInventoryItems } from '../types/inventory'
+import type { InventoryItem, GroupedInventoryItems } from '../../types/inventory'
 
 export interface InventoryFilters {
   searchQuery?: string
-  status?: 'all' | 'active' | 'inactive'
+  statusFilter?: 'all' | 'active' | 'inactive'
 //   categoryIds?: string[]
 //   vendorIds?: string[]
 //   locationIds?: string[]
@@ -16,7 +16,7 @@ export function groupAndSortInventoryItems(
 
   const {
     searchQuery = '',
-    status = 'all',
+    statusFilter = 'all',
     // categoryIds,
     // vendorIds,
     // locationIds
@@ -24,8 +24,8 @@ export function groupAndSortInventoryItems(
 
   // Step 1: Filter by status
   let filtered = items.filter(item => {
-    if (status === 'active') return item.isActive
-    if (status === 'inactive') return !item.isActive
+    if (statusFilter === 'active') return item.isActive
+    if (statusFilter === 'inactive') return !item.isActive
     return true
   })
 
@@ -54,9 +54,9 @@ export function groupAndSortInventoryItems(
     const key = item.categoryId
     if (!groups.has(key)) {
       groups.set(key, {
-        categoryId: item.categoryId,
-        categoryName: item.categoryName,
-        categoryDisplayOrder: item.categoryDisplayOrder ?? 9999,
+        categoryId: item.category.id,
+        categoryName: item.category.name,
+        categoryDisplayOrder: item.category.displayOrder ?? 9999,
         items: [],
       })
     }

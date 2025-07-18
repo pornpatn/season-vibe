@@ -1,16 +1,32 @@
+export interface InventoryCategory {
+  id: string
+  name: string
+  displayOrder?: number
+}
+
+export interface InventoryPropForm {
+  id: string
+  inventoryItemId: string
+  name: string,
+  conversionRate: number,
+  unitId: string
+}
+
 export interface InventoryItem {
+  categoryId: any
+  categoryName: string
+  categoryDisplayOrder: number
   id: string
   name: string
   alternateNames?: string
   description?: string
   note?: string
-  categoryId: string
-  categoryName: string
-  categoryDisplayOrder?: number
-  unitId?: string
   isActive: boolean
   displayOrder?: number
+  category: InventoryCategory
+  unitId?: string
   parLevels: Record<string, number>
+  inventoryPrepForms: InventoryPropForm[]
 }
 
 export interface GroupedInventoryItems {
@@ -20,11 +36,6 @@ export interface GroupedInventoryItems {
   items: InventoryItem[]
 }
 
-export interface InventoryCategory {
-  id: string
-  name: string
-  displayOrder?: number
-}
 
 export interface Unit {
   id: string

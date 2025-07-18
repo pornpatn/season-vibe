@@ -11,6 +11,6 @@ router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/roles', roleRoutes);
 router.use('/permissions', permissionRoutes);
-router.use('/api/inventory', inventoryRoutes);
+router.use('/inventory', inventoryRoutes);
 
 export default router;
