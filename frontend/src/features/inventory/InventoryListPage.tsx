@@ -17,16 +17,6 @@ import InventoryItemRow from './InventoryItemRow'
 import InventoryItemDialog from './InventoryItemDialog'
 import { type InventoryItemFormValues } from './InventoryItemForm';
 
-const categoryOptions = [
-  { id: 'cat1', name: 'Produce' },
-  { id: 'cat2', name: 'Dry Goods' },
-]
-
-const unitOptions = [
-  { id: 'u1', name: 'lbs' },
-  { id: 'u2', name: 'case' },
-]
-
 const locationOptions = [
   { id: 'loc1', name: 'Main Restaurant' },
   { id: 'loc2', name: 'Warehouse' },
@@ -50,7 +40,7 @@ const defaultFormValues: InventoryItemFormValues = {
 const InventoryListPage: React.FC = () => {
   const navigate = useNavigate()
 
-  const { items, loading, error, loadItems } = useInventoryStore()
+  const { items, categories, units, loading, load } = useInventoryStore()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
@@ -60,8 +50,8 @@ const InventoryListPage: React.FC = () => {
   const [editItem, setEditItem] = useState<InventoryItemFormValues | null>(null)
 
   useEffect(() => {
-    loadItems()
-  }, [loadItems])
+    load()
+  }, [load])
 
   const handleAddClick = () => {
     setEditItem(null)
@@ -71,7 +61,6 @@ const InventoryListPage: React.FC = () => {
   const handleSubmitItem = (data: InventoryItemFormValues) => {
     console.log('Save item:', data)
     setItemDialogOpen(false)
-    loadItems()
   }
 
   const grouped = useMemo(() =>
@@ -100,13 +89,13 @@ const InventoryListPage: React.FC = () => {
         </Box>
       )}
 
-      {error && (
+      {/* {error && (
         <Box textAlign="center" mt={4}>
           <Typography color="error">{error}</Typography>
         </Box>
-      )}
+      )} */}
 
-      {!loading && !error && grouped.map((group) => (
+      {!loading &&  grouped.map((group) => (
         <InventoryGroup key={group.categoryId} title={group.categoryName}>
           {group.items.map((item) => (
             <InventoryItemRow
@@ -144,8 +133,8 @@ const InventoryListPage: React.FC = () => {
         open={itemDialogOpen}
         mode={editItem ? 'edit' : 'create'}
         defaultValues={editItem || defaultFormValues}
-        categoryOptions={categoryOptions}
-        unitOptions={unitOptions}
+        categoryOptions={categories}
+        unitOptions={units}
         locationOptions={locationOptions}
         onClose={() => setItemDialogOpen(false)}
         onSubmit={handleSubmitItem}

@@ -1,0 +1,273 @@
+{
+  "categories": [
+    {
+      "id": "cat_produce",
+      "name": "Produce",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_meat",
+      "name": "Meat",
+      "displayOrder": 2
+    },
+    {
+      "id": "cat_seafood",
+      "name": "Seafood",
+      "displayOrder": 3
+    },
+    {
+      "id": "cat_dry",
+      "name": "Dry Goods",
+      "displayOrder": 4
+    },
+    {
+      "id": "cat_sauce",
+      "name": "Sauces",
+      "displayOrder": 5
+    }
+  ],
+  "units": [
+    {
+      "id": "unit_lb",
+      "name": "lb"
+    },
+    {
+      "id": "unit_kg",
+      "name": "kg"
+    },
+    {
+      "id": "unit_case",
+      "name": "case"
+    },
+    {
+      "id": "unit_bottle",
+      "name": "bottle"
+    },
+    {
+      "id": "unit_bag",
+      "name": "bag"
+    }
+  ],
+  "inventoryItems": [
+    {
+      "name": "Carrot",
+      "categoryId": "cat_produce",
+      "unitId": "unit_lb",
+      "id": "item_1",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 1
+    },
+    {
+      "name": "Green Cabbage",
+      "categoryId": "cat_produce",
+      "unitId": "unit_lb",
+      "id": "item_2",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 2
+    },
+    {
+      "name": "Red Onion",
+      "categoryId": "cat_produce",
+      "unitId": "unit_lb",
+      "id": "item_3",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 3
+    },
+    {
+      "name": "Cilantro",
+      "categoryId": "cat_produce",
+      "unitId": "unit_bag",
+      "id": "item_4",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 4
+    },
+    {
+      "name": "Chicken Breast",
+      "categoryId": "cat_meat",
+      "unitId": "unit_lb",
+      "id": "item_5",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 5
+    },
+    {
+      "name": "Pork Shoulder",
+      "categoryId": "cat_meat",
+      "unitId": "unit_lb",
+      "id": "item_6",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 6
+    },
+    {
+      "name": "Ground Pork",
+      "categoryId": "cat_meat",
+      "unitId": "unit_lb",
+      "id": "item_7",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 7
+    },
+    {
+      "name": "Beef Sirloin",
+      "categoryId": "cat_meat",
+      "unitId": "unit_lb",
+      "id": "item_8",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 8
+    },
+    {
+      "name": "Shrimp",
+      "categoryId": "cat_seafood",
+      "unitId": "unit_lb",
+      "id": "item_9",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 9
+    },
+    {
+      "name": "Salmon Fillet",
+      "categoryId": "cat_seafood",
+      "unitId": "unit_lb",
+      "id": "item_10",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 10
+    },
+    {
+      "name": "Jasmine Rice",
+      "categoryId": "cat_dry",
+      "unitId": "unit_bag",
+      "id": "item_11",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 11
+    },
+    {
+      "name": "Rice Noodles",
+      "categoryId": "cat_dry",
+      "unitId": "unit_case",
+      "id": "item_12",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 12
+    },
+    {
+      "name": "Tapioca Starch",
+      "categoryId": "cat_dry",
+      "unitId": "unit_bag",
+      "id": "item_13",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 13
+    },
+    {
+      "name": "Tempura Batter",
+      "categoryId": "cat_dry",
+      "unitId": "unit_bag",
+      "id": "item_14",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 14
+    },
+    {
+      "name": "Fish Sauce",
+      "categoryId": "cat_sauce",
+      "unitId": "unit_bottle",
+      "id": "item_15",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 15
+    },
+    {
+      "name": "Oyster Sauce",
+      "categoryId": "cat_sauce",
+      "unitId": "unit_bottle",
+      "id": "item_16",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 16
+    },
+    {
+      "name": "Soy Sauce",
+      "categoryId": "cat_sauce",
+      "unitId": "unit_bottle",
+      "id": "item_17",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 17
+    },
+    {
+      "name": "Golden Mountain",
+      "categoryId": "cat_sauce",
+      "unitId": "unit_bottle",
+      "id": "item_18",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 18
+    },
+    {
+      "name": "Sweet Chili Sauce",
+      "categoryId": "cat_sauce",
+      "unitId": "unit_bottle",
+      "id": "item_19",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 19
+    },
+    {
+      "name": "Hoisin Sauce",
+      "categoryId": "cat_sauce",
+      "unitId": "unit_bottle",
+      "id": "item_20",
+      "alternateNames": null,
+      "description": null,
+      "note": null,
+      "isActive": true,
+      "displayOrder": 20
+    }
+  ]
+}

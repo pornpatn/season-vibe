@@ -1,25 +1,45 @@
 import { create } from 'zustand'
 import type { InventoryItem } from '../types/inventory'
-import { fetchInventoryItems } from '../services/inventoryService'
+import {
+  fetchInventoryItems,
+  createInventoryItem,
+  updateInventoryItem,
+  fetchCategories,
+  fetchUnits
+} from '../services/inventoryService';
 
 interface InventoryState {
-  items: InventoryItem[]
-  loading: boolean
-  error: string | null
-  loadItems: () => Promise<void>
+  items: InventoryItem[];
+  loading: boolean;
+  categories: { id: string; name: string }[];
+  units: { id: string; name: string }[];
+  load: () => Promise<void>;
+  create: (data: Partial<InventoryItem>) => Promise<void>;
+  update: (id: string, data: Partial<InventoryItem>) => Promise<void>;
 }
 
-export const useInventoryStore = create<InventoryState>(set => ({
+export const useInventoryStore = create<InventoryState>((set, get) => ({
   items: [],
   loading: false,
-  error: null,
-  loadItems: async () => {
-    set({ loading: true, error: null })
-    try {
-      const items = await fetchInventoryItems()
-      set({ items, loading: false })
-    } catch (err: any) {
-      set({ error: err.message || 'Failed to load', loading: false })
-    }
+  categories: [],
+  units: [],
+  load: async () => {
+    set({ loading: true });
+    const [items, categories, units] = await Promise.all([
+      fetchInventoryItems(),
+      fetchCategories(),
+      fetchUnits(),
+    ]);
+    set({ items, categories, units, loading: false });
+  },
+  create: async (data) => {
+    const newItem = await createInventoryItem(data);
+    set({ items: [...get().items, newItem] });
+  },
+  update: async (id, data) => {
+    const updated = await updateInventoryItem(id, data);
+    set({
+      items: get().items.map((item) => (item.id === id ? updated : item)),
+    });
   },
 }))
