@@ -1,69 +1,22 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const permissions = [
-    { module: 'user', action: 'view' },
-    { module: 'user', action: 'create' },
-    { module: 'user', action: 'edit' },
-    { module: 'inventory', action: 'view' },
-    { module: 'inventory', action: 'edit' }
-  ];
+  console.log('Seeding database...');
+  await (await import('./seeds/roles.seed')).default(prisma);
+  await (await import('./seeds/permissions.seed')).default(prisma);
+  await (await import('./seeds/users.seed')).default(prisma);
 
-  // Create permissions
-  const createdPermissions = await Promise.all(
-    permissions.map(p => prisma.permission.upsert({
-      where: { module_action: { module: p.module, action: p.action } },
-      update: {},
-      create: p
-    }))
-  );
+  // Inventory
+  await (await import('./seeds/inventory.seed')).default(prisma);
 
-  // Create Admin role
-  const adminRole = await prisma.role.upsert({
-    where: { name: 'Admin' },
-    update: {},
-    create: {
-      name: 'Admin',
-      permissions: {
-        connect: createdPermissions.map(p => ({ id: p.id }))
-      }
-    }
-  });
-
-  // Create Owner role
-  const ownerRole = await prisma.role.upsert({
-    where: { name: 'Owner' },
-    update: {},
-    create: {
-      name: 'Owner',
-      permissions: {
-        connect: createdPermissions.map(p => ({ id: p.id }))
-      }
-    }
-  });
-
-  // Create admin user
-  const passwordHash = await bcrypt.hash('admin123', 10);
-  await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: {
-      username: 'admin',
-      email: 'admin@example.com',
-      password: passwordHash,
-      roleId: adminRole.id,
-    },
-  });
-
-  console.log('✅ Seed completed');
+  console.log('✅ Seeding completed.');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seed failed:', e);
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());

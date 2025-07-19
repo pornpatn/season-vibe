@@ -1,9 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import PrivateRoute from '../components/PrivateRoute'
+import ProtectedRoute from '../components/ProtectedRoute'
 import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
-import VitePage from '../pages/VitePage'
-// import InventoryPage from './pages/InventoryPage'
+import InventoryListPage from '../features/inventory/InventoryListPage'
+import InventoryItemDetailPage from '../features/inventory/InventoryItemDetailPage'
+import CreateInventoryItemPage from '../features/inventory/CreateInventoryItemPage'
 // import OrdersPage from './pages/OrdersPage'
 // import UsersPage from './pages/UsersPage'
 // import ReportsPage from './pages/ReportsPage'
@@ -12,28 +13,28 @@ import NotFoundPage from '../pages/NotFoundPage'
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public Route */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/vite" element={<VitePage />} />
 
       {/* Protected Routes */}
       <Route
         path="/"
         element={
-          <PrivateRoute>
+          <ProtectedRoute>
             <HomePage />
-          </PrivateRoute>
-        }
-      />
-      {/* <Route
-        path="/inventory"
-        element={
-          <PrivateRoute>
-            <InventoryPage />
-          </PrivateRoute>
+          </ProtectedRoute>
         }
       />
       <Route
+        path="/inventory"
+        element={
+          <ProtectedRoute>
+            <InventoryListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/inventory/:id" element={<ProtectedRoute><InventoryItemDetailPage /></ProtectedRoute>} />
+      <Route path="/inventory/create" element={<ProtectedRoute><CreateInventoryItemPage /></ProtectedRoute>} />
+      {/* <Route
         path="/orders"
         element={
           <PrivateRoute>

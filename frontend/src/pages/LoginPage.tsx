@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   useNavigate
 } from 'react-router-dom'
@@ -10,17 +10,27 @@ import {
   Typography
 } from '@mui/material'
 import { login } from '../services/authService'
+import { useAuthStore } from '../stores/authStore'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const { user, setAuth } = useAuthStore()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    if (user) {
+      navigate('/') // or '/dashboard'
+    }
+  }, [user, navigate])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(username, password);
+      const loginRes = await login(username, password);
+      const { accessToken, user }  = loginRes.data;
+      setAuth(accessToken, user);
       navigate('/');
     } catch (err) {
       setError('Login failed. Please check credentials.');
@@ -28,7 +38,7 @@ function LoginPage() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
+    <Container sx={{ mt: 10 }}>
       <Box
         component="form"
         onSubmit={handleLogin}

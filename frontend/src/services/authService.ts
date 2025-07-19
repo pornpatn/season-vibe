@@ -1,27 +1,33 @@
-import axios from 'axios';
-import { useAuthStore } from '../store/useAuthStore';
+import api from './axios'
 
-const API_BASE = import.meta.env.VITE_API_URL;
-
-const api = axios.create({
-  baseURL: API_BASE,
-  withCredentials: true
-});
-
-export async function login(username: string, password: string) {
-  const res = await api.post('/auth/signin', { username, password });
-  console.log(res.data);
-  useAuthStore.getState().setToken(res.data.accessToken);
+// LOGIN
+export const login = async (username: string, password: string) => {
+  const res = await api.post('/auth/login',
+    { username, password },
+    { withCredentials: true },
+  )
+  return res
 }
 
-export async function refreshAccessToken() {
-  const res = await api.post('/auth/refresh');
-  useAuthStore.getState().setToken(res.data.accessToken);
+// REFRESH TOKEN
+export const refreshToken = async () => {
+  const res = await api.post('/auth/refresh-token',
+    {},
+    { withCredentials: true },
+  )
+  return res
 }
 
-export function logout() {
-  useAuthStore.getState().setToken(null);
+// LOGOUT
+export const logout = async () => {
+  await api.post('/auth/logout',
+    {},
+    { withCredentials: true },
+  )
 }
 
-export { api };
-
+// CHECK LOGIN
+export const getCurrentUser = async () => {
+  const res = await api.get('/auth/me')
+  return res
+}
