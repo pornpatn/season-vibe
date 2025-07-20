@@ -4,7 +4,6 @@ import {
   Box,
   CircularProgress,
   IconButton,
-  Typography,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useInventoryStore } from '../../stores/inventoryStore'
@@ -16,6 +15,7 @@ import InventoryGroup from './InventoryGroup'
 import InventoryItemRow from './InventoryItemRow'
 import InventoryItemDialog from './InventoryItemDialog'
 import { type InventoryItemFormValues } from './InventoryItemForm';
+import { type StatusFilter } from '../../types/inventory'
 
 const locationOptions = [
   { id: 'loc1', name: 'Main Restaurant' },
@@ -43,7 +43,7 @@ const InventoryListPage: React.FC = () => {
   const { items, categories, units, loading, load } = useInventoryStore()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [filterDialogOpen, setFilterDialogOpen] = useState(false)
 
   const [itemDialogOpen, setItemDialogOpen] = useState(false)
@@ -95,7 +95,7 @@ const InventoryListPage: React.FC = () => {
         </Box>
       )} */}
 
-      {!loading &&  grouped.map((group) => (
+      {!loading && grouped.map((group) => (
         <InventoryGroup key={group.categoryId} title={group.categoryName}>
           {group.items.map((item) => (
             <InventoryItemRow
@@ -125,7 +125,12 @@ const InventoryListPage: React.FC = () => {
         onClose={() => setFilterDialogOpen(false)}
         onApply={(filters) => {
           console.log('Apply filters', filters)
-          // setStatusFilter(filters.status)
+
+          const normalizedStatus = (['all', 'active', 'inactive'].includes(filters.status)
+            ? filters.status
+            : 'all') as StatusFilter
+
+          setStatusFilter(normalizedStatus)
         }}
       />
 

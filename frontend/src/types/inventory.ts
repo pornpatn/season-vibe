@@ -41,3 +41,5 @@ export interface Unit {
   id: string
   name: string
 }
+
+export type StatusFilter = 'all' | 'active' | 'inactive'

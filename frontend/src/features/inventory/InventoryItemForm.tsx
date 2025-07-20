@@ -69,7 +69,7 @@ const InventoryItemForm: React.FC<Props> = ({
     append({ name: '', unitId: '', conversionRate: 1, default: false })
   }
 
-  const currentDefaultIndex = watch('prepForms').findIndex(p => p.default)
+  // const currentDefaultIndex = watch('prepForms').findIndex(p => p.default)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -136,7 +136,7 @@ const InventoryItemForm: React.FC<Props> = ({
         <Typography variant="h6">Par Levels</Typography>
         <Grid container spacing={2}>
           {daysOfWeek.map((day) => (
-            <Grid item xs={6} sm={4} key={day}>
+            <Grid size={{ xs: 6, sm: 4 }} key={day}>
               <TextField
                 type="number"
                 label={day}
@@ -151,7 +151,7 @@ const InventoryItemForm: React.FC<Props> = ({
         <Typography variant="h6">Locations</Typography>
         <Grid container spacing={2}>
           {locationOptions.map((loc) => (
-            <Grid item xs={6} key={loc.id}>
+            <Grid size={{ xs:6 }} key={loc.id}>
               <FormControlLabel
                 control={
                   <Controller
