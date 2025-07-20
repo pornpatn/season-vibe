@@ -1,12 +1,12 @@
 import request from 'supertest';
-import app from '../../src/app';
-import prisma from '../../src/prisma';
+import app from '../../app';
+import prisma from '../../prisma';
 
-jest.mock('../../src/middleware/authMiddleware', () => ({
+jest.mock('../../middleware/authMiddleware', () => ({
     authenticate: (_req: any, _res: any, next: any) => next(),
 }));
 
-jest.mock('../../src/middleware/authorize', () => ({
+jest.mock('../../middleware/authorize', () => ({
     authorize: () => (req: any, _res: any, next: any) => {
         req.user = { userId: 'test-user', roleId: 'test-role' };
         next();
