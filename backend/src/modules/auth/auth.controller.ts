@@ -51,6 +51,7 @@ export async function refreshToken(req: Request, res: Response) {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE === 'true',
       sameSite: process.env.COOKIE_SAMESITE || 'strict',
+      path: '/',
     } as CookieOptions);
 
     res.json({ accessToken: result.accessToken, user: result.user });
