@@ -83,7 +83,6 @@ model InventoryItem {
 
   inventoryLocationItems InventoryLocationItem[]
   inventoryPrepForms     InventoryPrepForm[]
-  parLevels              ParLevel[]
   inventoryPhotos        InventoryPhoto[]
 
   inventoryChecklistItems InventoryChecklistItem[]
@@ -106,6 +105,7 @@ model InventoryLocationItem {
   locationId      String
   inventoryItem   InventoryItem   @relation(fields: [inventoryItemId], references: [id])
   location        Location        @relation(fields: [locationId], references: [id])
+  parLevels       InventoryParLevel[]
 }
 
 model InventoryPrepForm {
@@ -119,14 +119,14 @@ model InventoryPrepForm {
   unit            Unit           @relation(fields: [unitId], references: [id])
 }
 
-model ParLevel {
-  id              String          @id @default(cuid())
-  inventoryItemId String
-  dayOfWeek       Int             // 0 = Sunday
-  amount          Float
-  inventoryItem   InventoryItem   @relation(fields: [inventoryItemId], references: [id])
+model InventoryParLevel {
+  id                  String                 @id @default(cuid())
+  inventoryLocationItemId String
+  dayOfWeek           Int                    // 0 = Sunday
+  amount              Float
+  inventoryLocationItem InventoryLocationItem @relation(fields: [inventoryLocationItemId], references: [id])
 
-  @@unique([inventoryItemId, dayOfWeek])
+  @@unique([inventoryLocationItemId, dayOfWeek])
 }
 
 model InventoryChecklist {
