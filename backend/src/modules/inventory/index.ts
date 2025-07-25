@@ -5,7 +5,7 @@ import categoryRoutes from './category.routes';
 import unitRoutes from './unit.routes';
 import inventoryPrepFormRoutes from './inventoryPrepForm.routes';
 import inventoryLocationItemRoutes from './inventoryLocationItem.routes';
-import parLevelRoutes from './parLevel.routes';
+import parLevelRoutes from './inventoryParLevel.routes';
 
 const router = express.Router();
 

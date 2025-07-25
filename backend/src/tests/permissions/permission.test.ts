@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../../app';
-import prisma from '../../prisma';
+import prisma from '../../lib/prisma';
 
 jest.mock('../../middleware/authMiddleware', () => ({
     authenticate: (_req: any, _res: any, next: any) => next(),

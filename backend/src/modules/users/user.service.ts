@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import prisma from '../../prisma';
+import prisma from '../../lib/prisma';
 
 export function listUsers() {
   return prisma.user.findMany({ include: { role: true } });
