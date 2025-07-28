@@ -1,4 +1,4 @@
-import type { InventoryItem, GroupedInventoryItems } from '../../types/inventory'
+import type { InventoryItem, GroupedInventoryItems } from '../../types/Inventory'
 
 export interface InventoryFilters {
   searchQuery?: string
@@ -10,60 +10,26 @@ export interface InventoryFilters {
 
 export function groupAndSortInventoryItems(
   items: InventoryItem[],
-  filters: InventoryFilters = {}
 ): GroupedInventoryItems[] {
   if (!items || items.length === 0) return []
 
-  const {
-    searchQuery = '',
-    statusFilter = 'all',
-    // categoryIds,
-    // vendorIds,
-    // locationIds
-} = filters
-
-  // Step 1: Filter by status
-  let filtered = items.filter(item => {
-    if (statusFilter === 'active') return item.isActive
-    if (statusFilter === 'inactive') return !item.isActive
-    return true
-  })
-
-  // Step 2: Search query match
-  const q = searchQuery.trim().toLowerCase()
-  if (q) {
-    filtered = filtered.filter(item => {
-      return (
-        item.name.toLowerCase().includes(q) ||
-        item.alternateNames?.toLowerCase().includes(q)
-      )
-    })
-  }
-
-  // Step 3: Filter by category (if any selected)
-//   if (categoryIds && categoryIds.length > 0) {
-//     filtered = filtered.filter(item => categoryIds.includes(item.categoryId))
-//   }
-
-  // Future filters like vendorIds/locationIds could be handled similarly when related fields exist
-
-  // Step 4: Group by category
+  // Group by category
   const groups = new Map<string, GroupedInventoryItems>()
 
-  for (const item of filtered) {
-    const key = item.categoryId
+  for (const item of items) {
+    const key = item.category?.id || '9999'
     if (!groups.has(key)) {
       groups.set(key, {
-        categoryId: item.category.id,
-        categoryName: item.category.name,
-        categoryDisplayOrder: item.category.displayOrder ?? 9999,
+        categoryId: item.category?.id || '9999',
+        categoryName: item.category?.name || 'Uncategorized',
+        categoryDisplayOrder: item.category?.displayOrder ?? 9999,
         items: [],
       })
     }
     groups.get(key)!.items.push(item)
   }
 
-  // Step 5: Sort categories
+  // Sort categories
   const sortedGroups = Array.from(groups.values()).sort((a, b) => {
     if (a.categoryDisplayOrder !== b.categoryDisplayOrder) {
       return a.categoryDisplayOrder - b.categoryDisplayOrder
@@ -71,7 +37,7 @@ export function groupAndSortInventoryItems(
     return a.categoryName.localeCompare(b.categoryName)
   })
 
-  // Step 6: Sort items inside each group
+  // Sort items inside each group
   for (const group of sortedGroups) {
     group.items.sort((a, b) => {
       const orderA = a.displayOrder ?? 9999

@@ -6,67 +6,75 @@ import {
   IconButton,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { useInventoryStore } from '../../stores/inventoryStore'
 import MainLayout from '../../layouts/MainLayout';
-import { groupAndSortInventoryItems } from './groupAndSortInventoryItems'
-import InventoryToolbar from './InventoryToolbar'
-import InventoryFilterDialog from './InventoryFilterDialog'
-import InventoryGroup from './InventoryGroup'
-import InventoryItemRow from './InventoryItemRow'
-import InventoryItemDialog from './InventoryItemDialog'
-import { type InventoryItemFormValues } from './InventoryItemForm';
-import { type StatusFilter } from '../../types/inventory'
+import { useInventoryItemStore } from '../../stores/inventoryItemStore'
+import { useCategoryStore } from '../../stores/categoryStore';
+import { useUnitStore } from '../../stores/unitStore';
+import InventoryToolbar from './components/InventoryToolbar'
+import InventoryFilterDialog from './components/InventoryFilterDialog'
+import InventoryGroup from './components/InventoryGroup'
+import InventoryItemRow from './components/InventoryItemRow'
+import InventoryItemBasicInfoDialog from './components/InventoryItemBasicInfoDialog'
+import { groupAndSortInventoryItems } from './groupAndSortInventoryItems';
+import type { InventoryItem } from '../../types/Inventory';
+import { type StatusFilter } from '../../types/Inventory'
 
-const locationOptions = [
-  { id: 'loc1', name: 'Main Restaurant' },
-  { id: 'loc2', name: 'Warehouse' },
-]
-
-const defaultFormValues: InventoryItemFormValues = {
+const defaultFormValues: InventoryItem = {
   name: '',
   alternateNames: '',
   description: '',
-  status: 'active',
+  note: '',
+  isActive: true,
   categoryId: '',
   unitId: '',
-  parLevels: {
-    Monday: 0, Tuesday: 0, Wednesday: 0,
-    Thursday: 0, Friday: 0, Saturday: 0, Sunday: 0,
-  },
-  locationIds: [],
-  prepForms: [],
+  id: '',
+  inventoryPrepForms: [],
+  locationAssignments: [],
 }
 
 const InventoryListPage: React.FC = () => {
   const navigate = useNavigate()
 
-  const { items, categories, units, loading, load } = useInventoryStore()
+  const {
+    filteredItems,
+    fetchItems,
+    loading,
+    filters,
+    setFilters,
+    createItem,
+  } = useInventoryItemStore();
 
-  const [searchQuery, setSearchQuery] = useState('')
+  const { categories, fetchCategories } = useCategoryStore();
+  const { units, fetchUnits } = useUnitStore();
+
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [filterDialogOpen, setFilterDialogOpen] = useState(false)
 
   const [itemDialogOpen, setItemDialogOpen] = useState(false)
-  const [editItem, setEditItem] = useState<InventoryItemFormValues | null>(null)
 
   useEffect(() => {
-    load()
-  }, [load])
+    fetchItems();
+    fetchCategories();
+    fetchUnits();
+  }, []);
 
   const handleAddClick = () => {
-    setEditItem(null)
     setItemDialogOpen(true)
   }
 
-  const handleSubmitItem = (data: InventoryItemFormValues) => {
-    console.log('Save item:', data)
+  const handleCreateItem = async (data: Partial<InventoryItem>) => {
+    try {
+      const newItem = await createItem(data);
+      navigate(`/inventory/${newItem.id}`);
+      return newItem;
+    } catch (err) {
+      console.error('Failed to create item:', err);
+      // optionally show a snackbar or error message
+    }
     setItemDialogOpen(false)
   }
 
-  const grouped = useMemo(() =>
-    groupAndSortInventoryItems(items, { searchQuery, statusFilter }),
-    [items, searchQuery, statusFilter]
-  )
+  const groupedItems = useMemo(() => groupAndSortInventoryItems(filteredItems), [filteredItems]);
 
   return (
     <MainLayout
@@ -78,8 +86,10 @@ const InventoryListPage: React.FC = () => {
       )}
     >
       <InventoryToolbar
-        search={searchQuery}
-        onSearchChange={setSearchQuery}
+        search={filters.search ?? ''}
+        onSearchChange={(query) => {
+          setFilters({ search: query })
+        }}
         onOpenFilter={() => setFilterDialogOpen(true)}
       />
 
@@ -89,30 +99,13 @@ const InventoryListPage: React.FC = () => {
         </Box>
       )}
 
-      {/* {error && (
-        <Box textAlign="center" mt={4}>
-          <Typography color="error">{error}</Typography>
-        </Box>
-      )} */}
-
-      {!loading && grouped.map((group) => (
+      {!loading && groupedItems.map((group) => (
         <InventoryGroup key={group.categoryId} title={group.categoryName}>
           {group.items.map((item) => (
             <InventoryItemRow
               key={item.id}
               item={item}
               onClick={() => navigate(`/inventory/${item.id}`)}
-              onEdit={() => {
-                const data: InventoryItemFormValues = {
-                  ...defaultFormValues,
-                  name: item.name,
-                  alternateNames: item.alternateNames,
-                  status: item.isActive ? 'active' : 'inactive',
-                  // You would map categoryId, unitId, etc. from item
-                }
-                setEditItem(data)
-                setItemDialogOpen(true)
-              }}
             />
           ))}
         </InventoryGroup>
@@ -134,15 +127,14 @@ const InventoryListPage: React.FC = () => {
         }}
       />
 
-      <InventoryItemDialog
+      <InventoryItemBasicInfoDialog
+        mode={'create'}
         open={itemDialogOpen}
-        mode={editItem ? 'edit' : 'create'}
-        defaultValues={editItem || defaultFormValues}
-        categoryOptions={categories}
-        unitOptions={units}
-        locationOptions={locationOptions}
+        item={defaultFormValues}
         onClose={() => setItemDialogOpen(false)}
-        onSubmit={handleSubmitItem}
+        onSave={handleCreateItem}
+        categories={categories}
+        units={units}
       />
     </MainLayout>
   )
