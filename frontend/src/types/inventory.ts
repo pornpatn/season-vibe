@@ -1,32 +1,59 @@
 export interface InventoryCategory {
-  id: string
-  name: string
-  displayOrder?: number
+  id: string;
+  name: string;
+  displayOrder?: number;
 }
 
-export interface InventoryPropForm {
-  id: string
-  inventoryItemId: string
-  name: string,
-  conversionRate: number,
-  unitId: string
+export interface InventoryPrepForm {
+  id: string;
+  inventoryItemId: string;
+  name: string;
+  conversionRate: number;
+  unitId: string;
+  unit?: Unit;
+}
+
+export interface InventoryParLevel {
+  id: string;
+  inventoryLocationItemId: string;
+  dayOfWeek: number; // 0 = Sunday
+  amount: number;
+}
+
+export interface InventoryLocationAssignment {
+  id: string;
+  locationId: string;
+  locationName?: string;
+  parLevels: InventoryParLevel[];
+  parSummary?: string; // optional summary (e.g., "10" or "8–12")
+}
+
+export interface Unit {
+  id: string;
+  name: string;
 }
 
 export interface InventoryItem {
-  categoryId: any
-  categoryName: string
-  categoryDisplayOrder: number
-  id: string
-  name: string
-  alternateNames?: string
-  description?: string
-  note?: string
-  isActive: boolean
-  displayOrder?: number
-  category: InventoryCategory
-  unitId?: string
-  parLevels: Record<string, number>
-  inventoryPrepForms: InventoryPropForm[]
+  id: string;
+  name: string;
+  alternateNames?: string;
+  description?: string;
+  note?: string;
+  isActive: boolean;
+  displayOrder?: number;
+  categoryId?: string;
+  category?: {
+    id: string;
+    name: string;
+    displayOrder?: number;
+  };
+  unitId?: string;
+  unit?: {
+    id: string;
+    name: string;
+  },
+  inventoryPrepForms: InventoryPrepForm[];
+  locationAssignments: InventoryLocationAssignment[];
 }
 
 export interface GroupedInventoryItems {
@@ -34,12 +61,6 @@ export interface GroupedInventoryItems {
   categoryName: string
   categoryDisplayOrder: number
   items: InventoryItem[]
-}
-
-
-export interface Unit {
-  id: string
-  name: string
 }
 
 export type StatusFilter = 'all' | 'active' | 'inactive'

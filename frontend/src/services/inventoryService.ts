@@ -1,5 +1,5 @@
 import api from './axios'
-import type { InventoryItem } from '../types/inventory'
+import type { InventoryItem } from '../types/Inventory'
 
 export async function fetchInventoryItems() {
   const res = await api.get<InventoryItem[]>('/inventory/items');
@@ -21,6 +21,19 @@ export async function updateInventoryItem(id: string, data: Partial<InventoryIte
   return res.data;
 }
 
+// Prep Forms
+export async function deletePrepForm(itemId: string, prepFormId: string) {
+  const res = await api.delete(`/inventory/items/${itemId}/prep-forms/${prepFormId}`);
+  return res.data;
+}
+
+// Location Assignments
+export async function deleteLocationAssignment(itemId: string, assignmentId: string) {
+  const res = await api.delete(`/inventory/items/${itemId}/locations/${assignmentId}`);
+  return res.data;
+}
+
+// Optional: For dropdowns
 export async function fetchCategories() {
   const res = await api.get('/inventory/categories');
   return res.data;
