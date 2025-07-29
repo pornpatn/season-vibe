@@ -57,6 +57,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, pageTitle, actions })
     { text: 'Inventory', path: '/inventory' },
     { text: 'Category', path: '/inventoryCategory' },
     { text: 'Unit', path: '/inventoryUnit' },
+    { text: 'Location', path: '/inventoryLocation' },
   ]
 
   const drawer = (

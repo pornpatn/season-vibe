@@ -6,9 +6,7 @@ import InventoryListPage from '../features/inventory/InventoryListPage'
 import InventoryItemDetailPage from '../features/inventory/InventoryItemDetailPage'
 import CategoryListPage from '../features/inventory/CategoryListPage'
 import UnitListPage from '../features/inventory/UnitListPage'
-// import OrdersPage from './pages/OrdersPage'
-// import UsersPage from './pages/UsersPage'
-// import ReportsPage from './pages/ReportsPage'
+import LocationListPage from '../features/inventory/LocationListPage'
 import NotFoundPage from '../pages/NotFoundPage'
 
 export default function AppRoutes() {
@@ -50,30 +48,14 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      {/* <Route
-        path="/orders"
+      <Route
+        path="/inventoryLocation"
         element={
-          <PrivateRoute>
-            <OrdersPage />
-          </PrivateRoute>
+          <ProtectedRoute>
+            <LocationListPage />
+          </ProtectedRoute>
         }
       />
-      <Route
-        path="/users"
-        element={
-          <PrivateRoute>
-            <UsersPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/reports"
-        element={
-          <PrivateRoute>
-            <ReportsPage />
-          </PrivateRoute>
-        }
-      /> */}
 
       {/* Not Found / 404 */}
       <Route path="/404" element={<NotFoundPage />} />

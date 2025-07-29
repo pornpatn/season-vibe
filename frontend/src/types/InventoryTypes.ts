@@ -4,6 +4,16 @@ export interface InventoryCategory {
   displayOrder?: number;
 }
 
+export interface Unit {
+  id: string;
+  name: string;
+}
+
+export interface Location {
+  id: string;
+  name: string;
+}
+
 export interface InventoryPrepForm {
   id: string;
   inventoryItemId: string;
@@ -26,11 +36,6 @@ export interface InventoryLocationAssignment {
   locationName?: string;
   parLevels: InventoryParLevel[];
   parSummary?: string; // optional summary (e.g., "10" or "8–12")
-}
-
-export interface Unit {
-  id: string;
-  name: string;
 }
 
 export interface InventoryItem {

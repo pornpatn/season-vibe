@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import {
   Box,
   CircularProgress,
-  IconButton,
+  Button,
+  Typography,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import MainLayout from '../../layouts/MainLayout';
@@ -80,9 +81,9 @@ const InventoryListPage: React.FC = () => {
     <MainLayout
       pageTitle="Inventory"
       actions={(
-        <IconButton color="inherit" onClick={handleAddClick}>
-          <AddIcon />
-        </IconButton>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick}>
+          New Item
+        </Button>
       )}
     >
       <InventoryToolbar
@@ -97,6 +98,12 @@ const InventoryListPage: React.FC = () => {
         <Box textAlign="center" mt={4}>
           <CircularProgress />
         </Box>
+      )}
+
+      {!loading && groupedItems.length === 0 && (
+        <Typography variant="body1" color="text.secondary">
+          No items found.
+        </Typography>
       )}
 
       {!loading && groupedItems.map((group) => (

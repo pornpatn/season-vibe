@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma';
 
 // Get all prep forms for a specific inventory item
 export const getPrepFormsByItem = async (inventoryItemId: string) => {
