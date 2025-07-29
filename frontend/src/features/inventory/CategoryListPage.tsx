@@ -8,6 +8,7 @@ import {
     ListItem,
     ListItemText,
     CircularProgress,
+    Button,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit';
@@ -46,9 +47,9 @@ const CategoryListPage = () => {
         <MainLayout
             pageTitle="Categories"
             actions={(
-                <IconButton color="inherit" onClick={handleAddClick}>
-                    <AddIcon />
-                </IconButton>
+                <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick}>
+                    New Category
+                </Button>
             )}
         >
             <Box p={3}>
