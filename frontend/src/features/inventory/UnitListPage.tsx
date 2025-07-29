@@ -56,6 +56,10 @@ const UnitListPage = () => {
                     <Box mt={2}><CircularProgress /></Box>
                 ) : error ? (
                     <Typography color="error">{error}</Typography>
+                ) : units.length === 0 ? (
+                    <Typography variant="body1" color="text.secondary">
+                        No units found. Click "New Unit" to create one.
+                    </Typography>
                 ) : (
                     <List>
                         {units.map((unit) => (
