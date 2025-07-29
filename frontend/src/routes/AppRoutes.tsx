@@ -4,6 +4,8 @@ import LoginPage from '../pages/LoginPage'
 import HomePage from '../pages/HomePage'
 import InventoryListPage from '../features/inventory/InventoryListPage'
 import InventoryItemDetailPage from '../features/inventory/InventoryItemDetailPage'
+import CategoryListPage from '../features/inventory/CategoryListPage'
+import UnitListPage from '../features/inventory/UnitListPage'
 // import OrdersPage from './pages/OrdersPage'
 // import UsersPage from './pages/UsersPage'
 // import ReportsPage from './pages/ReportsPage'
@@ -32,6 +34,22 @@ export default function AppRoutes() {
         }
       />
       <Route path="/inventory/:id" element={<ProtectedRoute><InventoryItemDetailPage /></ProtectedRoute>} />
+      <Route
+        path="/inventoryCategory"
+        element={
+          <ProtectedRoute>
+            <CategoryListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inventoryUnit"
+        element={
+          <ProtectedRoute>
+            <UnitListPage />
+          </ProtectedRoute>
+        }
+      />
       {/* <Route
         path="/orders"
         element={
