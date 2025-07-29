@@ -8,6 +8,7 @@ import {
     ListItem,
     ListItemText,
     CircularProgress,
+    Button,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit';
@@ -46,9 +47,9 @@ const UnitListPage = () => {
         <MainLayout
             pageTitle="Units"
             actions={(
-                <IconButton color="inherit" onClick={handleAddClick}>
-                    <AddIcon />
-                </IconButton>
+                <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick}>
+                    New Unit
+                </Button>
             )}
         >
             <Box p={3}>
@@ -56,6 +57,10 @@ const UnitListPage = () => {
                     <Box mt={2}><CircularProgress /></Box>
                 ) : error ? (
                     <Typography color="error">{error}</Typography>
+                ) : units.length === 0 ? (
+                    <Typography variant="body1" color="text.secondary">
+                        No units found. Click "New Unit" to create one.
+                    </Typography>
                 ) : (
                     <List>
                         {units.map((unit) => (
