@@ -15,7 +15,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { InventoryPrepForm, Unit } from '../../../types/Inventory';
+import type { InventoryPrepForm, Unit } from '../../../types/InventoryTypes';
 
 interface Props {
   prepForms: InventoryPrepForm[];

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { InventoryItem } from '../types/Inventory';
+import type { InventoryItem } from '../types/InventoryTypes';
 import {
   fetchInventoryItems,
   fetchInventoryItem,

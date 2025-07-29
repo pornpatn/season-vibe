@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import InventoryItemBasicInfoDialog from './InventoryItemBasicInfoDialog';
-import type { InventoryItem, Unit, InventoryCategory } from '../../../types/Inventory';
+import type { InventoryItem, Unit, InventoryCategory } from '../../../types/InventoryTypes';
 
 interface InventoryItemBasicInfoProps {
   item: InventoryItem;

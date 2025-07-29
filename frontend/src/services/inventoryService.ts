@@ -1,5 +1,5 @@
 import api from './axios'
-import type { InventoryItem } from '../types/Inventory'
+import type { InventoryItem } from '../types/InventoryTypes'
 
 export async function fetchInventoryItems() {
   const res = await api.get<InventoryItem[]>('/inventory/items');
