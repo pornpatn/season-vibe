@@ -32,14 +32,3 @@ export async function deleteLocationAssignment(itemId: string, assignmentId: str
   const res = await api.delete(`/inventory/items/${itemId}/locations/${assignmentId}`);
   return res.data;
 }
-
-// Optional: For dropdowns
-export async function fetchCategories() {
-  const res = await api.get('/inventory/categories');
-  return res.data;
-}
-
-export async function fetchUnits() {
-  const res = await api.get('/inventory/units');
-  return res.data;
-}

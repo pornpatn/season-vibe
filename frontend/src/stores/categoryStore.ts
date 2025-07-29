@@ -1,29 +1,50 @@
 import { create } from 'zustand';
-import type { Category } from '../types/Category';
-import { fetchCategories } from '../services/inventoryService';
+import { fetchCategories, createCategory, updateCategory, deleteCategory } from '../services/categoryService';
+import type { InventoryCategory } from '../types/InventoryTypes';
 
-interface CategoryStore {
-  categories: Category[];
+interface CategoryState {
+  categories: InventoryCategory[];
   loading: boolean;
-  categoryMap: Record<string, Category>;
-
+  error: string | null;
   fetchCategories: () => Promise<void>;
+  addCategory: (data: Partial<InventoryCategory>) => Promise<void>;
+  editCategory: (id: string, data: Partial<InventoryCategory>) => Promise<void>;
+  removeCategory: (id: string) => Promise<void>;
 }
 
-export const useCategoryStore = create<CategoryStore>((set) => ({
+export const useCategoryStore = create<CategoryState>((set, get) => ({
   categories: [],
   loading: false,
-  categoryMap: {},
+  error: null,
 
   fetchCategories: async () => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const categories = await fetchCategories();
-      const categoryMap = Object.fromEntries(categories.map((cat: Category) => [cat.id, cat]));
-      set({ categories, categoryMap, loading: false });
+      set({ categories });
     } catch (err) {
-      console.error('Error fetching categories', err);
+      set({ error: 'Failed to load categories' });
+    } finally {
       set({ loading: false });
     }
+  },
+
+  addCategory: async (data) => {
+    const newCategory = await createCategory(data);
+    set({ categories: [...get().categories, newCategory] });
+  },
+
+  editCategory: async (id, data) => {
+    const updated = await updateCategory(id, data);
+    set({
+      categories: get().categories.map((c) => (c.id === id ? updated : c)),
+    });
+  },
+
+  removeCategory: async (id) => {
+    await deleteCategory(id);
+    set({
+      categories: get().categories.filter((c) => c.id !== id),
+    });
   },
 }));

@@ -1,29 +1,50 @@
 import { create } from 'zustand';
 import type { Unit } from '../types/InventoryTypes';
-import { fetchUnits } from '../services/inventoryService';
+import { fetchUnits, createUnit, updateUnit, deleteUnit } from '../services/unitService';
 
-interface UnitStore {
+interface UnitState {
   units: Unit[];
   loading: boolean;
-  unitMap: Record<string, Unit>;
-
+  error: string | null;
   fetchUnits: () => Promise<void>;
+  addUnit: (data: Partial<Unit>) => Promise<void>;
+  editUnit: (id: string, data: Partial<Unit>) => Promise<void>;
+  removeUnit: (id: string) => Promise<void>;
 }
 
-export const useUnitStore = create<UnitStore>((set) => ({
+export const useUnitStore = create<UnitState>((set, get) => ({
   units: [],
   loading: false,
-  unitMap: {},
+  error: null,
 
   fetchUnits: async () => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const units = await fetchUnits();
-      const unitMap = Object.fromEntries(units.map((u: Unit) => [u.id, u]));
-      set({ units, unitMap, loading: false });
+      set({ units });
     } catch (err) {
-      console.error('Error fetching units', err);
+      set({ error: 'Failed to load units' });
+    } finally {
       set({ loading: false });
     }
+  },
+
+  addUnit: async (data) => {
+    const newUnit = await createUnit(data);
+    set({ units: [...get().units, newUnit] });
+  },
+
+  editUnit: async (id, data) => {
+    const updated = await updateUnit(id, data);
+    set({
+      units: get().units.map((u) => (u.id === id ? updated : u)),
+    });
+  },
+
+  removeUnit: async (id) => {
+    await deleteUnit(id);
+    set({
+      units: get().units.filter((u) => u.id !== id),
+    });
   },
 }));
