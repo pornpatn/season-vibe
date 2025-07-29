@@ -12,7 +12,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import type { InventoryItem, Unit, InventoryCategory } from '../../../types/Inventory';
+import type { InventoryItem, Unit, InventoryCategory } from '../../../types/InventoryTypes';
 
 const schema = z.object({
   name: z.string().min(1),

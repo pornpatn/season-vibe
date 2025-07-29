@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Typography, Chip } from '@mui/material'
-import type { InventoryItem } from '../../../types/Inventory'
+import type { InventoryItem } from '../../../types/InventoryTypes'
 
 interface Props {
     item: InventoryItem

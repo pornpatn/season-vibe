@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import { CircularProgress, Container, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import type { InventoryItem } from '../../types/Inventory';
+import type { InventoryItem } from '../../types/InventoryTypes';
 import { useInventoryItemStore } from '../../stores/inventoryItemStore';
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useUnitStore } from '../../stores/unitStore';

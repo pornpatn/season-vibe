@@ -16,8 +16,8 @@ import InventoryGroup from './components/InventoryGroup'
 import InventoryItemRow from './components/InventoryItemRow'
 import InventoryItemBasicInfoDialog from './components/InventoryItemBasicInfoDialog'
 import { groupAndSortInventoryItems } from './groupAndSortInventoryItems';
-import type { InventoryItem } from '../../types/Inventory';
-import { type StatusFilter } from '../../types/Inventory'
+import type { InventoryItem } from '../../types/InventoryTypes';
+import { type StatusFilter } from '../../types/InventoryTypes'
 
 const defaultFormValues: InventoryItem = {
   name: '',

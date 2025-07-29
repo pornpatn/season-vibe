@@ -1,4 +1,4 @@
-import type { InventoryItem, GroupedInventoryItems } from '../../types/Inventory'
+import type { InventoryItem, GroupedInventoryItems } from '../../types/InventoryTypes'
 
 export interface InventoryFilters {
   searchQuery?: string

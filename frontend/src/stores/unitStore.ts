@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Unit } from '../types/Inventory';
+import type { Unit } from '../types/InventoryTypes';
 import { fetchUnits } from '../services/inventoryService';
 
 interface UnitStore {
