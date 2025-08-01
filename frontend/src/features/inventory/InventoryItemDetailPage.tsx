@@ -1,30 +1,53 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import { CircularProgress, Container, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import type { InventoryItem } from '../../types/InventoryTypes';
+import type { InventoryItem, InventoryLocationAssignment } from '../../types/InventoryTypes';
 import { useInventoryItemStore } from '../../stores/inventoryItemStore';
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useUnitStore } from '../../stores/unitStore';
+import { useLocationStore } from '../../stores/locationStore';
 import InventoryItemBasicInfo from './components/InventoryItemBasicInfo';
 // import InventoryPrepForms from './components/InventoryPrepForms';
-// import InventoryLocationAssignments from '../components/InventoryLocationAssignments';
+import InventoryLocations from './components/InventoryLocations';
+import InventoryLocationDialog from './components/InventoryLocationDialog';
 import MainLayout from '../../layouts/MainLayout';
 
 const InventoryItemDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { selectedItem, fetchItem, updateItem, loading, clearSelectedItem } = useInventoryItemStore();
+  const {
+    selectedItem,
+    loading,
+    fetchItem,
+    updateItem,
+    clearSelectedItem,
+    updateParLevels,
+    assignLocation,
+    deleteLocationAssignment,
+   } = useInventoryItemStore();
   const { categories, fetchCategories } = useCategoryStore();
   const { units, fetchUnits } = useUnitStore();
+  const { locations, fetchLocations } = useLocationStore();
+
+  const [locationDialogOpen, setLocationDialogOpen] = useState(false);
+  const [editAssignment, setEditAssignment] = useState<InventoryLocationAssignment | null>(null);
 
   useEffect(() => {
     if (id) fetchItem(id);
     fetchCategories();
     fetchUnits();
+    fetchLocations()
     return () => clearSelectedItem(); // cleanup when unmounting
   }, [id]);
+
+  if (loading) return <CircularProgress />;
+
+  if (!selectedItem) return <Typography>No item found.</Typography>;
+
+  const assignedIds = new Set(selectedItem.inventoryLocationItems.map(a => a.location.id));
+  const unassignedLocations = locations.filter(loc => !assignedIds.has(loc.id));
 
   const handleEditItem = async (data: Partial<InventoryItem>) => {
     if (!selectedItem) return;
@@ -34,13 +57,39 @@ const InventoryItemDetailPage: React.FC = () => {
 
   const handleToggleItemStatus = async () => {
     if (!selectedItem) return;
-    const updatedItem = await updateItem(selectedItem.id, { isActive: !selectedItem.isActive});
+    const updatedItem = await updateItem(selectedItem.id, { isActive: !selectedItem.isActive });
     return updatedItem;
   }
 
-  if (loading) return <CircularProgress />;
+  const handleLocationAssignClick = async () => {
+    setEditAssignment(null);
+    setLocationDialogOpen(true);
+  }
 
-  if (!selectedItem) return <Typography>No item found.</Typography>;
+  const handleLocationEditClick = async (assignment: InventoryLocationAssignment) => {
+    setEditAssignment(assignment);
+    setLocationDialogOpen(true);
+  }
+
+  const handleLocationDelete = async (assignmentId: string) => {
+    await deleteLocationAssignment(selectedItem.id, assignmentId);
+  }
+
+  const handleLocationSave = async ({
+    locationId,
+    parLevels,
+  }: {
+    locationId: string;
+    parLevels: { dayOfWeek: number; amount: number }[];
+  }) => {
+    if (editAssignment) {
+      await updateParLevels(selectedItem.id, editAssignment.id, parLevels);
+    } else {
+      await assignLocation(selectedItem.id, locationId, parLevels);
+    }
+
+    setLocationDialogOpen(false);
+  }
 
   return (
     <MainLayout
@@ -72,13 +121,21 @@ const InventoryItemDetailPage: React.FC = () => {
           onEdit={(prepFormId) => editPrepForm(item.id, prepFormId)}
           onDelete={(prepFormId) => deletePrepForm(item.id, prepFormId)}
         /> */}
+        <InventoryLocations
+          item={selectedItem}
+          unassignedLocations={unassignedLocations}
+          onAssign={handleLocationAssignClick}
+          onEdit={handleLocationEditClick}
+          onDelete={handleLocationDelete}
+        />
 
-        {/* <InventoryLocationAssignments
-        itemId={item.id}
-        locations={item.locationAssignments}
-        onAssignClick={() => assignLocation(item.id)}
-        onDeleteClick={(assignmentId) => deleteLocationAssignment(item.id, assignmentId)}
-      /> */}
+        <InventoryLocationDialog
+          open={locationDialogOpen}
+          onClose={() => setLocationDialogOpen(false)}
+          assignment={editAssignment ?? undefined}
+          availableLocations={unassignedLocations}
+          onSave={handleLocationSave}
+        />
       </Container>
     </MainLayout>
   );

@@ -11,13 +11,13 @@ import MainLayout from '../../layouts/MainLayout';
 import LocationFormDialog from './components/LocationFormDialog';
 
 export default function LocationListPage() {
-    const { locations, loading, error, fetch, add, update, remove } = useLocationStore();
+    const { locations, loading, error, fetchLocations, addLocation, updateLocation, removeLocation } = useLocationStore();
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [editing, setEditing] = React.useState<any>(null);
 
     React.useEffect(() => {
-        fetch();
-    }, [fetch]);
+        fetchLocations();
+    }, [fetchLocations]);
 
     const handleAddClick = () => {
         setEditing(null);
@@ -26,9 +26,9 @@ export default function LocationListPage() {
 
     const handleSave = async (data: any) => {
         if (editing) {
-            await update(editing.id, data);
+            await updateLocation(editing.id, data);
         } else {
-            await add(data);
+            await addLocation(data);
         }
         setDialogOpen(false);
         setEditing(null);
@@ -66,7 +66,7 @@ export default function LocationListPage() {
                                     <IconButton onClick={() => { setEditing(loc); setDialogOpen(true); }}>
                                         <EditIcon />
                                     </IconButton>
-                                    <IconButton color="error" onClick={() => remove(loc.id)}>
+                                    <IconButton color="error" onClick={() => removeLocation(loc.id)}>
                                         <DeleteIcon />
                                     </IconButton>
                                 </Stack>

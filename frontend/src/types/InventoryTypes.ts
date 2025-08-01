@@ -30,10 +30,14 @@ export interface InventoryParLevel {
   amount: number;
 }
 
+export interface InventoryParLevelInput {
+  dayOfWeek: number;
+  amount: number;
+}
+
 export interface InventoryLocationAssignment {
   id: string;
-  locationId: string;
-  locationName?: string;
+  location: Location;
   parLevels: InventoryParLevel[];
   parSummary?: string; // optional summary (e.g., "10" or "8–12")
 }
@@ -58,7 +62,7 @@ export interface InventoryItem {
     name: string;
   },
   inventoryPrepForms: InventoryPrepForm[];
-  locationAssignments: InventoryLocationAssignment[];
+  inventoryLocationItems: InventoryLocationAssignment[];
 }
 
 export interface GroupedInventoryItems {

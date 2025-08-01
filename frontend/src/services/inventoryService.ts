@@ -1,5 +1,5 @@
 import api from './axios'
-import type { InventoryItem } from '../types/InventoryTypes'
+import type { InventoryItem, InventoryParLevelInput } from '../types/InventoryTypes'
 
 export async function fetchInventoryItems() {
   const res = await api.get<InventoryItem[]>('/inventory/items');
@@ -28,7 +28,14 @@ export async function deletePrepForm(itemId: string, prepFormId: string) {
 }
 
 // Location Assignments
+export async function assignLocation(itemId: string, locationId: string, parLevels: InventoryParLevelInput[]) {
+  return api.post(`/inventory/items/${itemId}/locations`, { locationId, parLevels });
+}
+
+export async function updateParLevels(itemId: string, assignmentId: string, parLevels: InventoryParLevelInput[]) {
+  return api.put(`/inventory/items/${itemId}/locations/${assignmentId}`, { parLevels });
+}
+
 export async function deleteLocationAssignment(itemId: string, assignmentId: string) {
-  const res = await api.delete(`/inventory/items/${itemId}/locations/${assignmentId}`);
-  return res.data;
+  return api.delete(`/inventory/items/${itemId}/locations/${assignmentId}`);
 }

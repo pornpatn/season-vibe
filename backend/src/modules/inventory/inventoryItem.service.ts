@@ -21,7 +21,12 @@ export const getInventoryItemById = async (id: string) => {
       category: true,
       unit: true,
       inventoryPrepForms: true,
-      inventoryLocationItems: true,
+      inventoryLocationItems: {
+        include: {
+          location: true,
+          parLevels: true,
+        }
+      },
     },
   });
 };

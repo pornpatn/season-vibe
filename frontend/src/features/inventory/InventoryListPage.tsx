@@ -30,7 +30,7 @@ const defaultFormValues: InventoryItem = {
   unitId: '',
   id: '',
   inventoryPrepForms: [],
-  locationAssignments: [],
+  inventoryLocationItems: [],
 }
 
 const InventoryListPage: React.FC = () => {
