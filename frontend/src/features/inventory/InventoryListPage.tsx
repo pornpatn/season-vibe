@@ -30,7 +30,7 @@ const defaultFormValues: InventoryItem = {
   unitId: '',
   id: '',
   inventoryPrepForms: [],
-  locationAssignments: [],
+  inventoryLocationItems: [],
 }
 
 const InventoryListPage: React.FC = () => {
@@ -124,8 +124,6 @@ const InventoryListPage: React.FC = () => {
         locationIds={[]}
         onClose={() => setFilterDialogOpen(false)}
         onApply={(filters) => {
-          console.log('Apply filters', filters)
-
           const normalizedStatus = (['all', 'active', 'inactive'].includes(filters.status)
             ? filters.status
             : 'all') as StatusFilter

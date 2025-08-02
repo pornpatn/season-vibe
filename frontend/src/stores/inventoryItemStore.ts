@@ -1,10 +1,16 @@
 import { create } from 'zustand';
-import type { InventoryItem } from '../types/InventoryTypes';
+import type { InventoryItem, InventoryParLevelInput, InventoryPrepForm } from '../types/InventoryTypes';
 import {
   fetchInventoryItems,
   fetchInventoryItem,
   createInventoryItem,
   updateInventoryItem,
+  assignLocation,
+  updateParLevels,
+  deleteLocationAssignment,
+  createPrepForm,
+  updatePrepForm,
+  deletePrepForm,
 } from '../services/inventoryService';
 
 type FilterOptions = {
@@ -25,6 +31,14 @@ interface InventoryItemStore {
 
   setFilters: (filters: Partial<FilterOptions>) => void;
   clearSelectedItem: () => void;
+
+  assignLocation: (itemId: string, locationId: string, parLevels: InventoryParLevelInput[]) => Promise<void>;
+  updateParLevels: (itemId: string, assignmentId: string, parLevels: InventoryParLevelInput[]) => Promise<void>;
+  deleteLocationAssignment: (itemId: string, assignmentId: string) => Promise<void>;
+
+  createPrepForm: (itemId: string, data: Partial<InventoryPrepForm>) => Promise<void>;
+  updatePrepForm: (itemId: string, prepFormId: string, data: Partial<InventoryPrepForm>) => Promise<void>;
+  deletePrepForm: (itemId: string, prepFormId: string) => Promise<void>;
 }
 
 function applyFilters(items: InventoryItem[], filters: FilterOptions): InventoryItem[] {
@@ -138,4 +152,40 @@ export const useInventoryItemStore = create<InventoryItemStore>((set, get) => ({
   },
 
   clearSelectedItem: () => set({ selectedItem: null }),
+
+  assignLocation: async (itemId, locationId, parLevels) => {
+    await assignLocation(itemId, locationId, parLevels);
+    const updated = await fetchInventoryItem(itemId);
+    set({ selectedItem: updated });
+  },
+
+  updateParLevels: async (itemId, assignmentId, parLevels) => {
+    await updateParLevels(itemId, assignmentId, parLevels);
+    const updated = await fetchInventoryItem(itemId);
+    set({ selectedItem: updated });
+  },
+
+  deleteLocationAssignment: async (itemId, assignmentId) => {
+    await deleteLocationAssignment(itemId, assignmentId);
+    const updated = await fetchInventoryItem(itemId);
+    set({ selectedItem: updated });
+  },
+
+  createPrepForm: async (itemId, data) => {
+    await createPrepForm(itemId, data);
+    const updated = await fetchInventoryItem(itemId);
+    set({ selectedItem: updated });
+  },
+
+  updatePrepForm: async (itemId, prepFormId, data) => {
+    await updatePrepForm(prepFormId, data);
+    const updated = await fetchInventoryItem(itemId);
+    set({ selectedItem: updated });
+  },
+
+  deletePrepForm: async (itemId, prepFormId) => {
+    await deletePrepForm(prepFormId);
+    const updated = await fetchInventoryItem(itemId);
+    set({ selectedItem: updated });
+  },
 }));

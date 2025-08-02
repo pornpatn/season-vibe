@@ -1,71 +1,106 @@
-import React from 'react';
+import { useState } from 'react';
 import {
-  Card,
-  CardContent,
   Typography,
   Stack,
   Button,
   IconButton,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
+  Box,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
+import type { InventoryItem, InventoryPrepForm } from '../../../types/InventoryTypes';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import type { InventoryPrepForm, Unit } from '../../../types/InventoryTypes';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
 
 interface Props {
-  prepForms: InventoryPrepForm[];
-  units: Unit[];
+  item: InventoryItem;
   onAdd: () => void;
-  onEdit: (prepFormId: string) => void;
+  onEdit: (prepForm: InventoryPrepForm) => void;
   onDelete: (prepFormId: string) => void;
 }
 
-const InventoryPrepForms: React.FC<Props> = ({ prepForms, units, onAdd, onEdit, onDelete }) => {
-  const getUnitName = (unitId: string) => units.find(u => u.id === unitId)?.name || '-';
+export default function InventoryPrepForms({ item, onAdd, onEdit, onDelete }: Props) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedPrepFormId, setSelectedPrepFormId] = useState<string | null>(null);
+
+  const handleDeleteClick = (assignmentId: string) => {
+    setSelectedPrepFormId(assignmentId);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (selectedPrepFormId) {
+      onDelete(selectedPrepFormId);
+    }
+    setConfirmOpen(false);
+    setSelectedPrepFormId(null);
+  };
+
+  const handleCancel = () => {
+    setConfirmOpen(false);
+    setSelectedPrepFormId(null);
+  };
 
   return (
-    <Card sx={{ mb: 3 }}>
+    <Card sx={{ mt: 2 }}>
       <CardContent>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
           <Typography variant="h6">Prep Forms</Typography>
-          <Button startIcon={<AddIcon />} onClick={onAdd} variant="outlined">Add Prep Form</Button>
-        </Stack>
+          <Button
+            size="small"
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={onAdd}
+          >
+            Form
+          </Button>
+        </Box>
 
-        {prepForms.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">No prep forms defined yet.</Typography>
+        {item.inventoryPrepForms.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            No prep forms defined.
+          </Typography>
         ) : (
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Conversion</TableCell>
-                <TableCell>Unit</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {prepForms.map((form) => (
-                <TableRow key={form.id}>
-                  <TableCell>{form.name}</TableCell>
-                  <TableCell>{form.conversionRate}</TableCell>
-                  <TableCell>{getUnitName(form.unitId)}</TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={() => onEdit(form.id)}><EditIcon /></IconButton>
-                    <IconButton onClick={() => onDelete(form.id)}><DeleteIcon /></IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          item.inventoryPrepForms.map(form => (
+            <Box key={form.id} sx={{ mb: 1, p: 1, border: '1px solid #ccc', borderRadius: 1 }}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="subtitle1">{form.name}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Unit: {form.unit?.name} | Conversion: {form.conversionRate}
+                    {form.note && ` | Note: ${form.note}`}
+                  </Typography>
+                </Box>
+                <Stack direction="row" spacing={1}>
+                  <IconButton size="small" onClick={() => onEdit(form)}><Edit fontSize="small" /></IconButton>
+                  <IconButton size="small" onClick={() => handleDeleteClick(form.id)}><Delete fontSize="small" /></IconButton>
+                </Stack>
+              </Stack>
+            </Box>
+          ))
         )}
       </CardContent>
+
+      <Dialog open={confirmOpen} onClose={handleCancel}>
+        <DialogTitle>Remove Assignment</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to remove this prep form?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleConfirm} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
-};
-
-export default InventoryPrepForms;
+}
