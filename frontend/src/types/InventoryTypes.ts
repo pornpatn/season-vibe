@@ -21,6 +21,7 @@ export interface InventoryPrepForm {
   conversionRate: number;
   unitId: string;
   unit?: Unit;
+  note?: string;
 }
 
 export interface InventoryParLevel {

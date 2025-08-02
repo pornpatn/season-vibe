@@ -20,7 +20,11 @@ export const getInventoryItemById = async (id: string) => {
     include: {
       category: true,
       unit: true,
-      inventoryPrepForms: true,
+      inventoryPrepForms: {
+        include: {
+          unit: true,
+        }
+      },
       inventoryLocationItems: {
         include: {
           location: true,

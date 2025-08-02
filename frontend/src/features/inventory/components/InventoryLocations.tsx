@@ -86,7 +86,7 @@ export default function InventoryLocations({
                         onClick={onAssign}
                         disabled={!hasAvailable}
                     >
-                        Assign Location
+                        Location
                     </Button>
                 </Box>
 

@@ -3,15 +3,16 @@ import { useParams } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import { CircularProgress, Container, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import type { InventoryItem, InventoryLocationAssignment } from '../../types/InventoryTypes';
+import type { InventoryItem, InventoryLocationAssignment, InventoryPrepForm } from '../../types/InventoryTypes';
 import { useInventoryItemStore } from '../../stores/inventoryItemStore';
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useUnitStore } from '../../stores/unitStore';
 import { useLocationStore } from '../../stores/locationStore';
 import InventoryItemBasicInfo from './components/InventoryItemBasicInfo';
-// import InventoryPrepForms from './components/InventoryPrepForms';
 import InventoryLocations from './components/InventoryLocations';
 import InventoryLocationDialog from './components/InventoryLocationDialog';
+import InventoryPrepForms from './components/InventoryPrepForms';
+import InventoryPrepFormDialog from './components/InventoryPrepFormDialog';
 import MainLayout from '../../layouts/MainLayout';
 
 const InventoryItemDetailPage: React.FC = () => {
@@ -26,13 +27,19 @@ const InventoryItemDetailPage: React.FC = () => {
     updateParLevels,
     assignLocation,
     deleteLocationAssignment,
-   } = useInventoryItemStore();
+    createPrepForm,
+    updatePrepForm,
+    deletePrepForm,
+  } = useInventoryItemStore();
   const { categories, fetchCategories } = useCategoryStore();
   const { units, fetchUnits } = useUnitStore();
   const { locations, fetchLocations } = useLocationStore();
 
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
-  const [editAssignment, setEditAssignment] = useState<InventoryLocationAssignment | null>(null);
+  const [editAssignment, setEditAssignment] = useState<InventoryLocationAssignment | undefined>(undefined);
+
+  const [prepFormDialogOpen, setPrepFormDialogOpen] = useState(false);
+  const [editingPrepForm, setEditingPrepForm] = useState<InventoryPrepForm | undefined>(undefined);
 
   useEffect(() => {
     if (id) fetchItem(id);
@@ -62,7 +69,7 @@ const InventoryItemDetailPage: React.FC = () => {
   }
 
   const handleLocationAssignClick = async () => {
-    setEditAssignment(null);
+    setEditAssignment(undefined);
     setLocationDialogOpen(true);
   }
 
@@ -91,6 +98,30 @@ const InventoryItemDetailPage: React.FC = () => {
     setLocationDialogOpen(false);
   }
 
+  const handlePrepFormAddClick = async () => {
+    setEditingPrepForm(undefined);
+    setPrepFormDialogOpen(true);
+  }
+
+  const handlePrepFormEditClick = async (prepForm: InventoryPrepForm) => {
+    setEditingPrepForm(prepForm);
+    setPrepFormDialogOpen(true);
+  }
+
+  const handlePrepFormDelete = async (prepFormId: string) => {
+    await deletePrepForm(selectedItem.id, prepFormId);
+  }
+
+  const handlePrepFormSave = async (data: Omit<InventoryPrepForm, 'id' | 'unit'>) => {
+    if (editingPrepForm) {
+      await updatePrepForm(selectedItem.id, editingPrepForm.id, data);
+    } else {
+      await createPrepForm(selectedItem.id, data);
+    }
+
+    setPrepFormDialogOpen(false);
+  }
+
   return (
     <MainLayout
       pageTitle="Inventory Item Details"
@@ -114,13 +145,6 @@ const InventoryItemDetailPage: React.FC = () => {
           categories={categories}
           units={units}
         />
-        {/* <InventoryPrepForms
-          prepForms={item.inventoryPrepForms}
-          units={units}
-          onAdd={() => addPrepForm(item.id)}
-          onEdit={(prepFormId) => editPrepForm(item.id, prepFormId)}
-          onDelete={(prepFormId) => deletePrepForm(item.id, prepFormId)}
-        /> */}
         <InventoryLocations
           item={selectedItem}
           unassignedLocations={unassignedLocations}
@@ -128,13 +152,25 @@ const InventoryItemDetailPage: React.FC = () => {
           onEdit={handleLocationEditClick}
           onDelete={handleLocationDelete}
         />
-
         <InventoryLocationDialog
           open={locationDialogOpen}
           onClose={() => setLocationDialogOpen(false)}
-          assignment={editAssignment ?? undefined}
+          assignment={editAssignment}
           availableLocations={unassignedLocations}
           onSave={handleLocationSave}
+        />
+        <InventoryPrepForms
+          item={selectedItem}
+          onAdd={handlePrepFormAddClick}
+          onEdit={handlePrepFormEditClick}
+          onDelete={handlePrepFormDelete}
+        />
+        <InventoryPrepFormDialog
+          open={prepFormDialogOpen}
+          onClose={() => setPrepFormDialogOpen(false)}
+          onSave={handlePrepFormSave}
+          prepForm={editingPrepForm}
+          units={units}
         />
       </Container>
     </MainLayout>
