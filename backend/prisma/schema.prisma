@@ -117,6 +117,7 @@ model InventoryPrepForm {
   inventoryItem   InventoryItem  @relation(fields: [inventoryItemId], references: [id])
   inventoryChecklistItems InventoryChecklistItem[]
   unit            Unit           @relation(fields: [unitId], references: [id])
+  note            String?
 }
 
 model InventoryParLevel {

@@ -12,16 +12,19 @@ export const getPrepFormById = async (req: Request, res: Response) => {
 };
 
 export const createPrepForm = async (req: Request, res: Response) => {
-  const form = await prepFormService.createPrepForm(req.body);
+  const itemId = req.params.itemId;
+  const form = await prepFormService.createPrepForm(itemId, req.body);
   res.status(201).json(form);
 };
 
 export const updatePrepForm = async (req: Request, res: Response) => {
-  const form = await prepFormService.updatePrepForm(req.params.id, req.body);
-  res.json(form);
+  const id = req.params.id;
+  const result = await prepFormService.updatePrepForm(id, req.body);
+  res.json(result);
 };
 
 export const deletePrepForm = async (req: Request, res: Response) => {
-  await prepFormService.deletePrepForm(req.params.id);
+  const id = req.params.id;
+  await prepFormService.deletePrepForm(id);
   res.status(204).send();
 };

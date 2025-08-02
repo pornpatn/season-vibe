@@ -6,10 +6,10 @@ interface State {
   locations: Location[];
   loading: boolean;
   error: string | null;
-  fetch: () => Promise<void>;
-  add: (data: Partial<Location>) => Promise<void>;
-  update: (id: string, data: Partial<Location>) => Promise<void>;
-  remove: (id: string) => Promise<void>;
+  fetchLocations: () => Promise<void>;
+  addLocation: (data: Partial<Location>) => Promise<void>;
+  updateLocation: (id: string, data: Partial<Location>) => Promise<void>;
+  removeLocation: (id: string) => Promise<void>;
 }
 
 export const useLocationStore = create<State>((set) => ({
@@ -17,7 +17,7 @@ export const useLocationStore = create<State>((set) => ({
   loading: false,
   error: null,
 
-  fetch: async () => {
+  fetchLocations: async () => {
     set({ loading: true, error: null });
     try {
       const locations = await service.fetchLocations();
@@ -28,16 +28,16 @@ export const useLocationStore = create<State>((set) => ({
       set({ loading: false });
     }
   },
-  add: async (data) => {
+  addLocation: async (data) => {
     await service.createLocation(data);
-    await (useLocationStore.getState().fetch());
+    await (useLocationStore.getState().fetchLocations());
   },
-  update: async (id, data) => {
+  updateLocation: async (id, data) => {
     await service.updateLocation(id, data);
-    await (useLocationStore.getState().fetch());
+    await (useLocationStore.getState().fetchLocations());
   },
-  remove: async (id) => {
+  removeLocation: async (id) => {
     await service.deleteLocation(id);
-    await (useLocationStore.getState().fetch());
+    await (useLocationStore.getState().fetchLocations());
   },
 }));
