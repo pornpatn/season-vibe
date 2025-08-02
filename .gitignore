@@ -135,7 +135,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .DS_Store
-/backend/prisma/migrations
 backend/prisma/dev.db
 
 backend/prisma/test.db
