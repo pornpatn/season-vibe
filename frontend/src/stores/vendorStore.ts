@@ -1,6 +1,6 @@
 // src/stores/vendorStore.ts
 import { create } from 'zustand';
-import type { Vendor, VendorContact } from '../types/Vendor';
+import type { Vendor, VendorContact, VendorInventoryItemInput } from '../types/Vendor';
 import * as vendorService from '../services/vendorService';
 
 interface VendorState {
@@ -18,7 +18,7 @@ interface VendorState {
     addContact: (vendorId: string, data: Partial<VendorContact>) => Promise<VendorContact>;
     updateContact: (vendorId: string, contactId: string, data: Partial<VendorContact>) => Promise<VendorContact>;
     deleteContact: (vendorId: string, contactId: string) => Promise<void>;
-
+    assignItems: (vendorId: string, items: VendorInventoryItemInput[]) => Promise<void>;
 }
 
 export const useVendorStore = create<VendorState>((set) => ({
@@ -114,5 +114,11 @@ export const useVendorStore = create<VendorState>((set) => ({
                 : null;
             return { vendor: updated };
         });
+    },
+
+    assignItems: async (vendorId, items) => {
+        await vendorService.assignVendorItems(vendorId, items);
+        const refreshed = await vendorService.fetchVendorById(vendorId);
+        set({ vendor: refreshed });
     },
 }));

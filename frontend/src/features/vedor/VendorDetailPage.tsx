@@ -12,27 +12,40 @@ import {
 import { useParams } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import { useVendorStore } from '../../stores/vendorStore';
+import { useInventoryItemStore } from '../../stores/inventoryItemStore';
+import { useUnitStore } from '../../stores/unitStore';
 import VendorDialog from './components/VendorDialog';
 import VendorContactList from './components/VendorContactList';
 import VendorContactDialog from './components/VendorContactDialog';
-// import VendorAssignedItemList from '../../components/vendors/VendorAssignedItemList';
+import VendorInventoryItemList from './components/VendorInventoryItemList';
 import MainLayout from '../../layouts/MainLayout';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import type { VendorContact } from '../../types/Vendor';
+import type { VendorContact, VendorInventoryItemInput } from '../../types/Vendor';
+import VendorInventoryItemAssignmentDialog from './components/VendorInventoryItemAssignmentDialog';
 
 export default function VendorDetailPage() {
     const { id } = useParams<{ id: string }>();
-    const { fetchVendorById, vendor } = useVendorStore();
+    const { vendor, fetchVendorById, assignItems } = useVendorStore();
+    const fetchInventory = useInventoryItemStore((s) => s.fetchItems);
+    const fetchUnits = useUnitStore((s) => s.fetchUnits);
+
     const [tab, setTab] = useState(0);
 
     const [openEdit, setOpenEdit] = useState(false);
 
-    const [contactDialogOpen, setContactDialogOpen] = useState(false);
     const [editingContact, setEditingContact] = useState<VendorContact | null>(null);
+    const [contactDialogOpen, setContactDialogOpen] = useState(false);
+
+    const [editAssignments, setEditAssignments] = useState(false);
 
     useEffect(() => {
         if (id) fetchVendorById(id);
     }, [id, fetchVendorById]);
+
+    useEffect(() => {
+        fetchInventory();
+        fetchUnits();
+    }, [fetchInventory, fetchUnits]);
 
     if (!vendor) return <Typography>Loading vendor...</Typography>;
 
@@ -49,6 +62,11 @@ export default function VendorDetailPage() {
     const handleDeleteContact = async (contact: VendorContact) => {
         if (!window.confirm(`Delete contact "${contact.name}"?`)) return;
         await useVendorStore.getState().deleteContact(vendor.id, contact.id);
+    };
+
+    const handleSaveAssignments = async (items: VendorInventoryItemInput[]) => {
+        await assignItems(vendor.id, items);
+        setEditAssignments(false);
     };
 
     return (
@@ -98,7 +116,16 @@ export default function VendorDetailPage() {
                                     onDelete={handleDeleteContact}
                                 />
                             )}
-                            {/* {tab === 1 && <VendorAssignedItemList vendor={vendor} />} */}
+                            {tab === 1 && (
+                                <>
+                                    <Box display="flex" justifyContent="flex-end" mb={1}>
+                                        <Button onClick={() => setEditAssignments(true)} variant="contained">
+                                            Edit Assignments
+                                        </Button>
+                                    </Box>
+                                    <VendorInventoryItemList items={vendor.inventoryVendorItems || []} />
+                                </>
+                            )}
                         </Box>
                     </Paper>
                 </Box>
@@ -126,6 +153,12 @@ export default function VendorDetailPage() {
                         }
                         setContactDialogOpen(false);
                     }}
+                />
+                <VendorInventoryItemAssignmentDialog
+                    open={editAssignments}
+                    onClose={() => setEditAssignments(false)}
+                    assignedItems={vendor.inventoryVendorItems || []}
+                    onSave={handleSaveAssignments}
                 />
             </Container>
         </MainLayout>

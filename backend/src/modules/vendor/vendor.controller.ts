@@ -43,3 +43,14 @@ export async function deleteVendorContact(req: Request, res: Response) {
   await vendorService.deleteVendorContact(req.params.contactId);
   res.status(204).end();
 }
+
+export async function assignVendorItems(req: Request, res: Response) {
+  const vendorId = req.params.vendorId;
+  const items = req.body;
+  if (!Array.isArray(items)) {
+    return res.status(400).json({ message: 'Invalid payload format' });
+  }
+
+  await vendorService.assignVendorItems(vendorId, items);
+  res.status(204).end();
+}

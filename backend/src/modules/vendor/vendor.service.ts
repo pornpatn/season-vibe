@@ -17,7 +17,11 @@ export async function getVendorById(id: string) {
       contacts: true,
       inventoryVendorItems: {
         include: {
-          inventoryItem: true,
+          inventoryItem: {
+            include: {
+              category: true,
+            },
+          },
           unit: true,
         },
       },
@@ -62,4 +66,31 @@ export async function deleteVendorContact(id: string) {
   return prisma.vendorContact.delete({
     where: { id },
   });
+}
+
+export async function assignVendorItems(vendorId: string, items: {
+  inventoryItemId: string;
+  vendorName?: string;
+  vendorNote?: string;
+  unitId?: string | null;
+}[]) {
+  // Delete existing assignments for this vendor
+  await prisma.inventoryVendorItem.deleteMany({
+    where: { vendorId },
+  });
+
+  if (items.length === 0) return [];
+
+  // Create new ones
+  const created = await prisma.inventoryVendorItem.createMany({
+    data: items.map((item) => ({
+      vendorId,
+      inventoryItemId: item.inventoryItemId,
+      vendorName: item.vendorName,
+      vendorNote: item.vendorNote,
+      unitId: item.unitId || null,
+    })),
+  });
+
+  return created;
 }

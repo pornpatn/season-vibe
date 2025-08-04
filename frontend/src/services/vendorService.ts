@@ -1,6 +1,6 @@
 // src/services/vendorService.ts
 import api from './axios';
-import type { Vendor, VendorContact } from '../types/Vendor';
+import type { Vendor, VendorContact, VendorInventoryItemInput } from '../types/Vendor';
 
 export async function fetchVendors(): Promise<Vendor[]> {
   const res = await api.get('/vendors');
@@ -48,4 +48,11 @@ export async function deleteVendorContact(
   contactId: string
 ): Promise<void> {
   await api.delete(`/vendors/${vendorId}/contacts/${contactId}`);
+}
+
+export async function assignVendorItems(
+  vendorId: string,
+  items: VendorInventoryItemInput[]
+): Promise<void> {
+  await api.post(`/vendors/${vendorId}/items`, items);
 }

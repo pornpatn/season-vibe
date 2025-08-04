@@ -13,4 +13,7 @@ router.post('/:vendorId/contacts', controller.createVendorContact);
 router.put('/:vendorId/contacts/:contactId', controller.updateVendorContact);
 router.delete('/:vendorId/contacts/:contactId', controller.deleteVendorContact);
 
+router.post('/:vendorId/items', controller.assignVendorItems);
+
+
 export default router;
