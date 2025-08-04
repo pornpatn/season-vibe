@@ -66,6 +66,7 @@ model Unit {
   inventoryItems        InventoryItem[]
   inventoryPrepForms    InventoryPrepForm[]
   inventoryOrderItems   InventoryOrderItem[]
+  InventoryVendorItems  InventoryVendorItem[]
 }
 
 model InventoryItem {
@@ -226,6 +227,8 @@ model InventoryVendorItem {
   inventoryItemId String
   vendorName      String?
   vendorNote      String?
+  unitId          String?
+  unit            Unit?            @relation(fields: [unitId], references: [id])
   vendor          Vendor           @relation(fields: [vendorId], references: [id])
   inventoryItem   InventoryItem    @relation(fields: [inventoryItemId], references: [id])
 }
