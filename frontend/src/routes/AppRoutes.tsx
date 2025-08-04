@@ -7,7 +7,9 @@ import InventoryItemDetailPage from '../features/inventory/InventoryItemDetailPa
 import CategoryListPage from '../features/inventory/CategoryListPage'
 import UnitListPage from '../features/inventory/UnitListPage'
 import LocationListPage from '../features/inventory/LocationListPage'
+import VendorListPage from '../features/vedor/VendorListPage'
 import NotFoundPage from '../pages/NotFoundPage'
+import VendorDetailPage from '../features/vedor/VendorDetailPage'
 
 export default function AppRoutes() {
   return (
@@ -31,7 +33,13 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/inventory/:id" element={<ProtectedRoute><InventoryItemDetailPage /></ProtectedRoute>} />
+      <Route path="/inventory/:id"
+        element={
+          <ProtectedRoute>
+            <InventoryItemDetailPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/inventoryCategory"
         element={
@@ -53,6 +61,21 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <LocationListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vendor"
+        element={
+          <ProtectedRoute>
+            <VendorListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/vendor/:id"
+        element={
+          <ProtectedRoute>
+            <VendorDetailPage />
           </ProtectedRoute>
         }
       />
